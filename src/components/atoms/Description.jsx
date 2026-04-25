@@ -1,8 +1,14 @@
-export default function Description({ children }) {
-    return (
-        <p className="text-sm md:text-base lg:text-lg w-2/3 mx-auto mb-6 text-gray-900">
-            {children}
-        </p>
+export default function Description({ children, style = "center" }) {
+  const styles = {
+    center: "text-center",
+    justify: "text-justify",
+  };
 
-    );
+  return (
+    <p
+      className={`text-base md:text-lg lg:text-xl mb-6 text-gray-900 ${styles[style]}`}
+    >
+      {children}
+    </p>
+  );
 }
