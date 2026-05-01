@@ -1,6 +1,6 @@
 export default function Tittle({ children }) {
   return (
-    <h1 className="text-6xl md:text-6xl lg:text-7xl font-bold text-sky-500 mb-4">
+    <h1 className="font-poopins font-bold text-4xl md:text-6xl lg:text-7xl text-gray-900">
       {children}
     </h1>
   );

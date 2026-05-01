@@ -1,7 +1,11 @@
-export default function NavLinks({ href, children }) {
-    return (
-        <a href={href} className="hover:underline cursor-pointer">
-            {children}
-        </a>
-    );
+export default function NavLink({ href, children, onClick }) {
+  return (
+    <a
+      href={href}
+      onClick={onClick}
+      className="hover:underline cursor-pointer"
+    >
+      {children}
+    </a>
+  );
 }

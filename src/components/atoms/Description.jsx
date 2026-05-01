@@ -6,7 +6,7 @@ export default function Description({ children, style = "center" }) {
 
   return (
     <p
-      className={`text-base md:text-lg lg:text-xl mb-6 text-gray-900 ${styles[style]}`}
+      className={`font-poppins text-sm md:text-base lg:text-md mx-auto mt-3 text-gray-900 ${styles[style]}`}
     >
       {children}
     </p>

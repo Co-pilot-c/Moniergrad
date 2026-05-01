@@ -3,36 +3,41 @@ import Tittle from "../components/atoms/Tittle.jsx";
 import Button from "../components/atoms/Button.jsx";
 import Description from "../components/atoms/Description.jsx";
 import Maskot from "../assets/vector/Maskot.png";
-
 import Score from "../components/atoms/Score.jsx";
+import bg_home from "../assets/images/bg_home.jpeg";
 
 export default function Home() {
+  const homeData = {
+    tittle: "Dewan Ambalan Monierson & Gradison",
+    description:
+      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Minus, distinctio natus. Adipisci necessitatibus a consectetur.",
+  };
+
   return (
     <section
       id="home"
-      className="relative h-screen flex justify-center items-end bg-gradient-to-tr from-white via-sky-100 to-sky-300 m-10 rounded-3xl "
+      className="relative h-screen flex justify-center items-center m-10 rounded-2xl"
+      style={{
+        backgroundImage: `url(${bg_home})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
     >
-      <div className="text-center w-5/6 sm:w-5/6 md:w-4/6 lg:w-3/6 z-10">
-        <div className="sm:mb-32 lg:mb-0">
-          <Tittle>
-            Selamat <span className="text-gray-900">Datang</span>
-          </Tittle>
-          <Description style="center">
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Temporibus
-            dolor, magnam fuga et inventore voluptate cumque obcaecati eum
-            aliquid placeat.
-          </Description>
-        </div>
+      <div className="absolute inset-0 bg-black/50 rounded-2xl" />
 
-        <div className="relative">
-          <img src={Maskot} alt="" />
-
-          {/* <div className="absolute bottom-20 left-52 flex gap-5 backdrop-blur-lg bg-sky-100/50 border border-white shadow-xl rounded-2xl p-5 text-center hover-scale-105 trasition duration-300">
-            <Score value={120} suffix="+" label="Anggota Active" />
-            <Score value={120} suffix="+" label="Anggota Active" />
-            <Score value={120} suffix="+" label="Anggota Active" />
-          </div> */}
-        </div>
+      <div className="relative z-10 text-center text-white shadow-md">
+        <h2 className="font-poppins font-bold text-xl md:text-2xl lg:text-3xl">
+          WELCOME TO
+        </h2>
+        <h1 className="font-poopins font-bold text-4xl md:text-5xl lg:text-6xl xl:text-7xl w-3/4 md:w-4/5 lg:w-4/5 xl:w-3/5 mx-auto">
+          {homeData.tittle}
+        </h1>
+        <p className="font-poppins text-sm w-2/3 md:w-4/4 lg:w-3/5 xl:4/5 mx-auto mt-3">
+          {homeData.description}
+        </p>
+        <button className="bg-white text-gray-900 font-semibold font-poppins px-6 py-2 rounded-full mt-5">
+          Jelajahi
+        </button>
       </div>
     </section>
   );

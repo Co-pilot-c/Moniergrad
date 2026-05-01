@@ -1,14 +1,25 @@
 import NavLink from "../atoms/NavLink.jsx";
 
-export default function NavMenu() {
-    return (
-        <ul className="flex justify-center items-center gap-2 sm:gap-3 md:gap-5 text-white text-xs sm:text-sm md:text-base">
-            <NavLink href="#home">Home</NavLink>
-            <NavLink href="#about">About</NavLink>
-            <NavLink href="#strukture">Strukture</NavLink>
-            <NavLink href="#program">Program</NavLink>
-            <NavLink href="#purna">Purna</NavLink>
-        
-        </ul>
-    )
+
+export default function NavMenu({ onClick }) {
+
+  return (
+    <ul className="flex justify-center items-center gap-2 sm:gap-3 md:gap-5 text-md md:text-base lg:text-lg">
+      <NavLink href="#home" onClick={onClick}>
+        Home
+      </NavLink>
+      <NavLink href="#about" onClick={onClick}>
+        About
+      </NavLink>
+      <NavLink href="#strukture" onClick={onClick}>
+        Strukture
+      </NavLink>
+      <NavLink href="#program" onClick={onClick}>
+        Program
+      </NavLink>
+      <NavLink href="#purna" onClick={onClick}>
+        Purna
+      </NavLink>
+    </ul>
+  );
 }
