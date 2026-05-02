@@ -5,9 +5,11 @@ import Description from "../components/atoms/Description";
 import Bg from "../assets/images/bg_home.jpeg";
 import Bg2 from "../assets/images/bg_2.jpeg";
 import Bga from "../assets/images/bga.jpg";
-import Anggota from "../assets/images/anggota.png"
+import Anggota from "../assets/images/anggota.png";
 import { useState } from "react";
 import Angkatan from "../pages/Angkatan";
+import Aing from "../assets/images/Aing.png";
+import kl from "../assets/images/kl.png";
 
 export default function Strukture() {
   const organisasi = [
@@ -22,12 +24,12 @@ export default function Strukture() {
           bidang: "Logistik",
         },
         {
-          image: Bg,
+          image: Aing,
           nama: "HUMAS",
           bidang: "Hubungan Masyarakat",
         },
         {
-          image: Bg,
+          image: kl,
           nama: "HUMAS",
           bidang: "Hubungan Masyarakat",
         },

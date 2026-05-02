@@ -36,68 +36,118 @@ export default function Program() {
   return (
     <section
       id="program"
-      className="min-h-screen bg-white py-10 px-10 xl:px-52 flex flex-col lg:flex-col xl:flex-row gap-10 justify-center items-center"
+      className="relative bg-white py-16 lg:py-24 px-6 lg:px-20 overflow-hidden"
     >
-      <div className="flex md:flex-row lg:flex-row xl:flex-col gap-5 md:w-full lg:w-full xl:w-2/3">
-        {current.images.map((image, i) => (
-          <div key={i} className="aspect-[7/4] overflow-hidden rounded-xl">
-            <img src={image} className="w-full h-full object-cover" />
-          </div>
-        ))}
-      </div>
-      <div className="mw-full xl:w-4/5">
-        <Tagline>Pogram Kami</Tagline>
-        <div className="flex justify-between">
-          <div>
-            <Tittle>{current.title}</Tittle>
-            <Subtitle>{current.subtitle}</Subtitle>
-          </div>
-          <div className=" flex items-center gap-5">
-            <button
-              onClick={handlePrev}
-              className="bg-white w-12 h-12 md:w-16 md:h-16 rounded-full"
-            >
-              ❮
-            </button>
+      {/* Background decoration */}
+      <div className="absolute top-1/2 left-0 w-96 h-96 bg-gradient-green-light opacity-10 rounded-full blur-3xl -translate-y-1/2"></div>
+      <div className="absolute bottom-0 right-0 w-64 h-64 bg-primary-200 opacity-10 rounded-full blur-2xl"></div>
 
-            <button
-              onClick={handleNext}
-              className="bg-white w-12 h-12 md:w-16 md:h-16  rounded-full"
-            >
-              ❯
-            </button>
-          </div>
-        </div>
-
-        <Description style="justify">
-          Lorem ipsum dolor sit amet consectetur, adipisicing elit. Fuga
-          voluptates nihil dolores sunt ipsam veniam neque repudiandae minus
-          illum voluptas officiis hic, necessitatibus ullam, reprehenderit sint
-          architecto praesentium sequi quaerat inventore obcaecati voluptatum?
-          Reiciendis dicta maxime adipisci fugiat itaque, tempore facere dolor
-          consequatur totam cum cumque repellendus accusamus, corporis laborum.
-          Lorem ipsum dolor sit amet consectetur, adipisicing elit. Fuga
-          voluptates nihil dolores sunt ipsam veniam neque repudiandae minus
-          illum voluptas officiis hic, necessitatibus ullam, reprehenderit sint
-          architecto praesentium sequi quaerat inventore obcaecati voluptatum?
-          Reiciendis dicta maxime adipisci fugiat itaque, tempore facere dolor
-          consequatur totam cum cumque repellendus accusamus, corporis laborum.
-        </Description>
-        <div className="mt-8 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-5 text-center">
-          <div className="px-3 border-r border-gray-200">
-            <Score value={120} suffix="+" label="Active" />
+      <div className="relative max-w-7xl mx-auto">
+        <div className="grid lg:grid-cols-2 gap-16 lg:gap-20 items-center">
+          {/* Image Gallery */}
+          <div className="space-y-6 animate-fadeSlideIn">
+            <div className="flex flex-col lg:flex-col gap-6">
+              {current.images.map((image, i) => (
+                <div key={i} className="relative group">
+                  <div className="absolute inset-0 bg-gradient-green opacity-0 group-hover:opacity-10 rounded-3xl transition-opacity duration-400"></div>
+                  <div className="aspect-[7/4] overflow-hidden rounded-3xl shadow-soft group-hover:shadow-medium transition-all duration-400">
+                    <img 
+                      src={image} 
+                      className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" 
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            {/* Image indicators */}
+            <div className="flex justify-center gap-2">
+              {programs.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setPage(index)}
+                  className={`w-2 h-2 rounded-full transition-all duration-400 ${
+                    index === page 
+                      ? "w-8 bg-gradient-green" 
+                      : "bg-gray-300 hover:bg-gray-400"
+                  }`}
+                />
+              ))}
+            </div>
           </div>
 
-          <div className="px-3 border-r border-gray-200">
-            <Score value={92} suffix="K" label="Users" />
-          </div>
+          {/* Content */}
+          <div className="space-y-8 animate-fadeSlideUp">
+            <div className="space-y-4">
+              <Tagline>Program Kami</Tagline>
+              <div className="flex justify-between items-start">
+                <div>
+                  <Tittle>{current.title}</Tittle>
+                  <Subtitle>{current.subtitle}</Subtitle>
+                </div>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={handlePrev}
+                    className="w-12 h-12 bg-white rounded-full shadow-soft flex items-center justify-center text-gray-700 hover:bg-gradient-green hover:text-white hover:shadow-green transition-all duration-400 transform hover:scale-110"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg>
+                  </button>
 
-          <div className="px-3 border-r border-gray-200">
-            <Score value={25} suffix="%" label="Growth" />
-          </div>
+                  <button
+                    onClick={handleNext}
+                    className="w-12 h-12 bg-white rounded-full shadow-soft flex items-center justify-center text-gray-700 hover:bg-gradient-green hover:text-white hover:shadow-green transition-all duration-400 transform hover:scale-110"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
 
-          <div className="px-3">
-            <Score value={12} suffix="K+" label="Testimonials" />
+            <Description style="justify">
+              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Fuga
+              voluptates nihil dolores sunt ipsam veniam neque repudiandae minus
+              illum voluptas officiis hic, necessitatibus ullam, reprehenderit sint
+              architecto praesentium sequi quaerat inventore obcaecati voluptatum?
+              Reiciendis dicta maxime adipisci fugiat itaque, tempore facere dolor
+              consequatur totam cum cumque repellendus accusamus, corporis laborum.
+              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Fuga
+              voluptates nihil dolores sunt ipsam veniam neque repudiandae minus
+              illum voluptas officiis hic, necessitatibus ullam, reprehenderit sint
+              architecto praesentium sequi quaerat inventore obcaecati voluptatum?
+              Reiciendis dicta maxime adipisci fugiat itaque, tempore facere dolor
+              consequatur totam cum cumque repellendus accusamus, corporis laborum.
+            </Description>
+
+            {/* Stats */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="text-center group">
+                <div className="bg-gradient-green-light/10 rounded-2xl p-6 transition-all duration-400 group-hover:shadow-green group-hover:scale-105">
+                  <Score value={120} suffix="+" label="Active" />
+                </div>
+              </div>
+
+              <div className="text-center group">
+                <div className="bg-gradient-green-light/10 rounded-2xl p-6 transition-all duration-400 group-hover:shadow-green group-hover:scale-105">
+                  <Score value={92} suffix="K" label="Users" />
+                </div>
+              </div>
+
+              <div className="text-center group">
+                <div className="bg-gradient-green-light/10 rounded-2xl p-6 transition-all duration-400 group-hover:shadow-green group-hover:scale-105">
+                  <Score value={25} suffix="%" label="Growth" />
+                </div>
+              </div>
+
+              <div className="text-center group">
+                <div className="bg-gradient-green-light/10 rounded-2xl p-6 transition-all duration-400 group-hover:shadow-green group-hover:scale-105">
+                  <Score value={12} suffix="K+" label="Testimonials" />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

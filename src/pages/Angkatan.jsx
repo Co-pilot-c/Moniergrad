@@ -56,8 +56,11 @@ export default function Angkatan({
       )}
 
       <div className="relative z-10 text-left p-5 sm:p-8 md:p-10 text-white shadow-md">
-        <h3 className="text-sm sm:text-base">{status}</h3>
-        <h2 className="font-poppins font-bold text-xl md:text-2xl lg:text-3xl">
+        <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/20 mb-2 animate-scaleIn">
+          <span className="w-2 h-2 bg-primary-400 rounded-full animate-pulse"></span>
+          <span className="text-sm font-medium">{status}</span>
+        </div>
+        <h2 className="font-poppins text-green-200 font-bold text-xl md:text-2xl lg:text-3xl">
           Dewan Ambalan
         </h2>
         <h1 className="font-poopins font-bold text-4xl md:text-6xl lg:text-7xl">

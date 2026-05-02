@@ -21,11 +21,26 @@ html {
 .animate-scroll {
   display: flex;
   width: max-content;
-  animation: scroll 40s linear infinite;
+  animation: scroll 30s linear infinite;
 }
 
 .animate-scroll:hover {
   animation-play-state: paused;
+}
+
+/* Smooth scroll behavior for testimonials */
+.testimonial-scroll {
+  scroll-behavior: smooth;
+}
+
+/* Hide scrollbar for all browsers */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
 /* Hide scrollbar for horizontal scroll */

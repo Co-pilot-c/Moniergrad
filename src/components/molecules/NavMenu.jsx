@@ -4,7 +4,7 @@ import NavLink from "../atoms/NavLink.jsx";
 export default function NavMenu({ onClick }) {
 
   return (
-    <ul className="flex justify-center items-center gap-2 sm:gap-3 md:gap-5 text-md md:text-base lg:text-lg">
+    <ul className="flex justify-center items-center gap-1 sm:gap-2 md:gap-3 text-md md:text-base lg:text-lg">
       <NavLink href="#home" onClick={onClick}>
         Home
       </NavLink>
