@@ -1,17 +1,36 @@
-import maskot from "../assets/vector/maskot.png";
+import { useEffect, useState } from "react";
 import Tittle from "../components/atoms/Tittle.jsx";
 import Button from "../components/atoms/Button.jsx";
 import Description from "../components/atoms/Description.jsx";
-import Maskot from "../assets/vector/Maskot.png";
 import Score from "../components/atoms/Score.jsx";
 import bg_home from "../assets/images/bg_home.jpeg";
+import { fetchContent } from "../utils/contentLoader.js";
 
 export default function Home() {
-  const homeData = {
-    tittle: "Dewan Ambalan Monierson & Gradison",
-    description:
-      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Minus, distinctio natus. Adipisci necessitatibus a consectetur.",
-  };
+  const [heroData, setHeroData] = useState({
+    title: "Dewan Ambalan Monierson & Gradison",
+    description: "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Minus, distinctio natus. Adipisci necessitatibus a consectetur.",
+    maskot_image: null,
+  });
+  const [ctaButtons, setCtaButtons] = useState([]);
+
+  useEffect(() => {
+    const loadHeroData = async () => {
+      const heroItems = await fetchContent("hero");
+      if (heroItems.length > 0) {
+        setHeroData(heroItems[0]);
+      }
+    };
+    loadHeroData();
+  }, []);
+
+  useEffect(() => {
+    const loadCtaButtons = async () => {
+      const buttons = await fetchContent("cta", true);
+      setCtaButtons(buttons);
+    };
+    loadCtaButtons();
+  }, []);
 
   return (
     <section
@@ -40,19 +59,35 @@ export default function Home() {
           WELCOME TO
         </h2> */}
         <h1 className="font-poppins font-bold text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl leading-tight mb-6 animate-fadeSlideUp" style={{animationDelay: "0.3s"}}>
-          {homeData.tittle}
+          {heroData.title}
         </h1>
         <p className="font-poppins text-base md:text-lg lg:text-xl text-gray-200 max-w-3xl mx-auto mb-8 leading-relaxed animate-fadeSlideUp" style={{animationDelay: "0.4s"}}>
-          {homeData.description}
+          {heroData.description}
         </p>
         
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fadeSlideUp" style={{animationDelay: "0.5s"}}>
-          <Button variant="primary" href="#about">
-            Jelajahi
-          </Button>
-          <Button variant="secondary" href="#strukture">
-            Learn More
-          </Button>
+          {ctaButtons.map((button, index) => {
+            let href = "#";
+            
+            if (button.link_type === "internal") {
+              href = button.link_url || "#";
+            } else if (button.link_type === "external") {
+              href = button.link_url || "#";
+            } else if (button.link_type === "whatsapp") {
+              const phoneNumber = button.whatsapp_number || "6281234567890";
+              href = `https://wa.me/${phoneNumber}`;
+            }
+
+            return (
+              <Button 
+                key={index} 
+                variant={button.variant || "primary"} 
+                href={href}
+              >
+                {button.label}
+              </Button>
+            );
+          })}
         </div>
 
         {/* Scroll indicator

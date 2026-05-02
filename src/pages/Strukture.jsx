@@ -1,203 +1,30 @@
+import { useState, useEffect } from "react";
 import Card from "../components/molecules/Card";
-import Orang from "../assets/orang/orangan.jpeg";
 import Tittle from "../components/atoms/Tittle";
 import Description from "../components/atoms/Description";
 import Bg from "../assets/images/bg_home.jpeg";
-import Bg2 from "../assets/images/bg_2.jpeg";
-import Bga from "../assets/images/bga.jpg";
-import Anggota from "../assets/images/anggota.png";
-import { useState } from "react";
 import Angkatan from "../pages/Angkatan";
-import Aing from "../assets/images/Aing.png";
-import kl from "../assets/images/kl.png";
+import { fetchContent } from "../utils/contentLoader.js";
 
 export default function Strukture() {
-  const organisasi = [
-    {
-      angkatan: "50/14",
-      image: Bg,
-      status: "Demisoner",
-      members: [
-        {
-          image: Anggota,
-          nama: "Ifan",
-          bidang: "Logistik",
-        },
-        {
-          image: Aing,
-          nama: "HUMAS",
-          bidang: "Hubungan Masyarakat",
-        },
-        {
-          image: kl,
-          nama: "HUMAS",
-          bidang: "Hubungan Masyarakat",
-        },
-        {
-          image: Bg,
-          nama: "HUMAS",
-          bidang: "Hubungan Masyarakat",
-        },
-        {
-          image: Bg,
-          nama: "HUMAS",
-          bidang: "Hubungan Masyarakat",
-        },
-        {
-          image: Bg,
-          nama: "HUMAS",
-          bidang: "Hubungan Masyarakat",
-        },
-        {
-          image: Bg,
-          nama: "HUMAS",
-          bidang: "Hubungan Masyarakat",
-        },
-        {
-          image: Bg,
-          nama: "HUMAS",
-          bidang: "Hubungan Masyarakat",
-        },
-        {
-          image: Bg,
-          nama: "HUMAS",
-          bidang: "Hubungan Masyarakat",
-        },
-        {
-          image: Bg,
-          nama: "HUMAS",
-          bidang: "Hubungan Masyarakat",
-        },
-        {
-          image: Bg,
-          nama: "HUMAS",
-          bidang: "Hubungan Masyarakat",
-        },
-        {
-          image: Bg,
-          nama: "HUMAS",
-          bidang: "Hubungan Masyarakat",
-        },
-        {
-          image: Bg,
-          nama: "HUMAS",
-          bidang: "Hubungan Masyarakat",
-        },
-        {
-          image: Bg,
-          nama: "HUMAS",
-          bidang: "Hubungan Masyarakat",
-        },
-        {
-          image: Bg,
-          nama: "HUMAS",
-          bidang: "Hubungan Masyarakat",
-        },
-        {
-          image: Bg,
-          nama: "HUMAS",
-          bidang: "Hubungan Masyarakat",
-        },
-        {
-          image: Bg,
-          nama: "HUMAS",
-          bidang: "Hubungan Masyarakat",
-        },
-        {
-          image: Bg,
-          nama: "HUMAS",
-          bidang: "Hubungan Masyarakat",
-        },
-        {
-          image: Bg,
-          nama: "HUMAS",
-          bidang: "Hubungan Masyarakat",
-        },
-        {
-          image: Bg,
-          nama: "HUMAS",
-          bidang: "Hubungan Masyarakat",
-        },
-        {
-          image: Bg,
-          nama: "HUMAS",
-          bidang: "Hubungan Masyarakat",
-        },
-        {
-          image: Bg,
-          nama: "HUMAS",
-          bidang: "Hubungan Masyarakat",
-        },
-        {
-          image: Bg,
-          nama: "HUMAS",
-          bidang: "Hubungan Masyarakat",
-        },
-        {
-          image: Bg,
-          nama: "HUMAS",
-          bidang: "Hubungan Masyarakat",
-        },
-        {
-          image: Bg,
-          nama: "HUMAS",
-          bidang: "Hubungan Masyarakat",
-        },
-        {
-          image: Bg,
-          nama: "HUMAS",
-          bidang: "Hubungan Masyarakat",
-        },
-        {
-          image: Bg,
-          nama: "HUMAS",
-          bidang: "Hubungan Masyarakat",
-        },
-        {
-          image: Bg,
-          nama: "HUMAS",
-          bidang: "Hubungan Masyarakat",
-        },
-        {
-          image: Bg,
-          nama: "HUMAS",
-          bidang: "Hubungan Masyarakat",
-        },
-      ],
-    },
-    {
-      angkatan: "51/15",
-      image: Bga,
-      status: "Demisoner",
-      members: [
-        {
-          image: Bg,
-          nama: "KRANI",
-          bidang: "Hubungan Krani",
-        },
-        {
-          image: Bg,
-          nama: "KRANI",
-          bidang: "Hubungan Krani",
-        },
-      ],
-    },
-    {
-      angkatan: "52/16",
-      image: Bg2,
-      status: "Demisoner",
-      members: [
-        {
-          image: Bg2,
-          nama: "Demisoner",
-          bidang: "52/16",
-        },
-      ],
-    },
-  ];
-
+  const [organisasi, setOrganisasi] = useState([]);
   const [page, setPage] = useState(0);
-  const current = organisasi[page];
+
+  useEffect(() => {
+    const loadData = async () => {
+      const angkatanData = await fetchContent("angkatan");
+      setOrganisasi(angkatanData);
+    };
+    loadData();
+  }, []);
+
+  const current = organisasi.length > 0 ? organisasi[page] : {
+    title: "Loading...",
+    image: Bg,
+    status: "Loading",
+    members: [],
+  };
+
   const handlePrev = () => {
     setPage((prev) => (prev === 0 ? organisasi.length - 1 : prev - 1));
   };
@@ -212,13 +39,15 @@ export default function Strukture() {
       <div className="relative">
         <Angkatan
           {...current}
+          angkatan={current.title}
+          image={current.image}
+          status={current.status}
+          members={current.members}
           dataAngkatan={current}
           handlePrev={handlePrev}
           handleNext={handleNext}
         />
       </div>
-
-      {/* <h2 className="text-xl font-bold mt-6">{current.angkatan}</h2> */}
     </section>
   );
 }

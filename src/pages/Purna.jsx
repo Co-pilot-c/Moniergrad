@@ -1,53 +1,26 @@
+import { useState, useEffect } from "react";
 import Title from "../components/atoms/Tittle";
 import Description from "../components/atoms/Description";
 import CardCom from "../components/molecules/CardCom";
-import My from "../assets/vector/orangk.jpg";
+import { fetchContent } from "../utils/contentLoader.js";
+import defaultProfile from "../assets/vector/orangk.jpg";
 
 export default function Purna() {
-  const testimonials = [
-    {
-      profile: My,
-      name: "Alfath Rizqiy",
-      purna: "Angkatan 51",
-      quetes:
-        "Pengalaman di Dewan Ambalan telah membentuk karakter kepemimpinan saya dan memberikan fondasi yang kuat untuk masa depan. Saya belajar tentang tanggung jawab, disiplin, dan pentingnya kerjasama tim.",
-    },
-    {
-      profile: My,
-      name: "Sarah Putri",
-      purna: "Angkatan 50",
-      quetes:
-        "Dewan Ambalan bukan hanya organisasi, tapi keluarga kedua saya. Di sini saya menemukan teman sejati, mentor yang peduli, dan kesempatan untuk berkembang menjadi versi terbaik diri saya.",
-    },
-    {
-      profile: My,
-      name: "Muhammad Fajar",
-      purna: "Angkatan 49",
-      quetes:
-        "Setiap kegiatan dan pelatihan di Dewan Ambalan telah memberikan saya skills yang berharga untuk kehidupan profesional. Saya sangat berterima kasih atas semua pengalaman yang tak terlupakan ini.",
-    },
-    {
-      profile: My,
-      name: "Rina Amelia",
-      purna: "Angkatan 52",
-      quetes:
-        "Bergabung dengan Dewan Ambalan adalah keputusan terbaik yang pernah saya buat. Saya tidak hanya belajar tentang kepemimpinan, tapi juga tentang bagaimana menjadi orang yang lebih baik dan bertanggung jawab.",
-    },
-    {
-      profile: My,
-      name: "Budi Santoso",
-      purna: "Angkatan 48",
-      quetes:
-        "Dewan Ambalan mengajarkan saya arti sebenarnya dari persaudaraan dan pengabdian. Pengalaman ini akan selalu menjadi bagian tak terpisahkan dari perjalanan hidup saya.",
-    },
-    {
-      profile: My,
-      name: "Dewi Lestari",
-      purna: "Angkatan 47",
-      quetes:
-        "Melalui Dewan Ambalan, saya menemukan passion saya dalam mengorganisir dan memimpin. Ini adalah tempat di mana mimpi dan potensi saya bisa tumbuh dan berkembang dengan pesat.",
-    },
-  ];
+  const [testimonials, setTestimonials] = useState([]);
+
+  useEffect(() => {
+    const loadPurnaData = async () => {
+      const purnaItems = await fetchContent("purna");
+      const formattedItems = purnaItems.map(item => ({
+        profile: item.profile || defaultProfile,
+        name: item.title,
+        purna: item.angkatan,
+        quetes: item.quotes,
+      }));
+      setTestimonials(formattedItems);
+    };
+    loadPurnaData();
+  }, []);
 
   return (
     <section
