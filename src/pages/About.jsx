@@ -82,7 +82,7 @@ export default function About() {
                   <img
                     src={Bg_home}
                     alt="About us"
-                    className="w-full lg:w-1/2 h-64 lg:h-auto object-cover"
+                    className="w-full lg:w-1/2 h-93 lg:h-auto object-cover"
                   />
                   <div className="p-8 lg:p-10 flex items-center">
                     <div>
