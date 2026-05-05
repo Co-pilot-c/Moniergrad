@@ -4,8 +4,18 @@ const helmet = require('helmet');
 const path = require('path');
 require('dotenv').config();
 
+// Environment detection - must be defined early
+const isVercel = process.env.VERCEL === '1';
+
 const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+
+// Prisma client with connection pooling for serverless
+const globalForPrisma = globalThis;
+const prisma = globalForPrisma.prisma ?? new PrismaClient({
+  log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
+});
+
+if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
 
 const app = express();
 
@@ -19,7 +29,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Static files untuk uploads
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+const uploadsStaticDir = isVercel ? '/tmp/uploads' : path.join(__dirname, '..', 'uploads');
+app.use('/uploads', express.static(uploadsStaticDir));
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -356,7 +367,6 @@ const multer = require('multer');
 const fs = require('fs');
 
 // Use /tmp for Vercel (writable), local for development
-const isVercel = process.env.VERCEL === '1';
 const uploadsDir = isVercel 
   ? '/tmp/uploads' 
   : path.join(__dirname, '..', 'uploads');
