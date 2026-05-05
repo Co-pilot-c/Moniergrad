@@ -355,14 +355,23 @@ app.delete('/api/navigation/:id', async (req, res) => {
 const multer = require('multer');
 const fs = require('fs');
 
-// Create uploads directory if not exists
-const uploadsDir = path.join(__dirname, '..', 'uploads');
-if (!fs.existsSync(uploadsDir)) {
+// Use /tmp for Vercel (writable), local for development
+const isVercel = process.env.VERCEL === '1';
+const uploadsDir = isVercel 
+  ? '/tmp/uploads' 
+  : path.join(__dirname, '..', 'uploads');
+
+// Create uploads directory if not exists (only for local)
+if (!isVercel && !fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
+    // Ensure /tmp/uploads exists for Vercel
+    if (isVercel && !fs.existsSync(uploadsDir)) {
+      fs.mkdirSync(uploadsDir, { recursive: true });
+    }
     cb(null, uploadsDir);
   },
   filename: (req, file, cb) => {
@@ -392,7 +401,11 @@ app.post('/api/upload', upload.single('file'), (req, res) => {
       return res.status(400).json({ error: 'No file uploaded' });
     }
     
-    const fileUrl = `/uploads/${req.file.filename}`;
+    // Return full URL for uploaded file
+    const protocol = req.headers['x-forwarded-proto'] || req.protocol;
+    const host = req.headers.host;
+    const fileUrl = `${protocol}://${host}/uploads/${req.file.filename}`;
+    
     res.json({ 
       message: 'File uploaded successfully',
       filename: req.file.filename,
