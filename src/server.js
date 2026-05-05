@@ -7,6 +7,13 @@ require('dotenv').config();
 // Environment detection - must be defined early
 const isVercel = process.env.VERCEL === '1';
 
+// Inject DATABASE_URL jika belum ada (fallback untuk Vercel)
+// DATABASE_URL seharusnya diset di Vercel Environment Variables dashboard
+// Ini hanya fallback sementara
+if (!process.env.DATABASE_URL) {
+  process.env.DATABASE_URL = "postgresql://neondb_owner:npg_eTyj9Z5aRVlA@ep-withered-tooth-ant0kwmh-pooler.c-6.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require";
+}
+
 const { PrismaClient } = require('@prisma/client');
 
 // Prisma client with connection pooling for serverless
