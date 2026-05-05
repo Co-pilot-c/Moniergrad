@@ -1,5 +1,6 @@
 import NavMenu from "../molecules/NavMenu";
-import logo from "../../assets/vector/logo.png";
+import Monierson from "../../assets/vector/Monierson.png";
+import Gradison from "../../assets/vector/Gradison.png";
 import { useLocation, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 
@@ -48,15 +49,16 @@ export default function Navbar() {
       >
         <div
           className={`relative flex items-center justify-between transition-all duration-400
-        ${isScrolled ? "px-6 py-3" : "px-8 lg:px-20 py-5"}`}
+        ${isScrolled ? "px-10 py-3" : "px-12 lg:px-32 py-5"}`}
         >
           {/* LOGO */}
           {!isFotografer && (
-            <div className="flex items-center gap-2 group">
+            <div className="flex items-center gap-10 group">
               <div
-                className={`w-10 h-10 rounded-full bg-gradient-green flex items-center justify-center transition-all duration-400 group-hover:scale-110 ${isScrolled ? "shadow-green" : "shadow-lg"}`}
+                className={`w-8 h-8 rounded-full flex gap-2 items-center justify-center transition-all duration-400 group-hover:scale-110 ${isScrolled ? "" : ""}`}
               >
-                <span className="text-white font-bold text-lg">DA</span>
+                <img src={Monierson} alt="" />
+                <img src={Gradison} alt="" />
               </div>
               <h1
                 className={`text-sm md:text-lg font-bold transition-colors duration-400
@@ -141,9 +143,10 @@ export default function Navbar() {
             <div className="h-full flex flex-col">
               {/* Header */}
               <div className="flex justify-between items-center px-6 pt-12 border-b border-gray-100">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-green flex items-center justify-center shadow-green">
-                    <span className="text-white font-bold text-lg">DA</span>
+                <div className="flex flex-col items-center gap-5">
+                  <div className="w-8 h-8 flex gap-2 items-center justify-end">
+                    <img src={Monierson} alt="" />
+                    <img src={Gradison} alt="" />
                   </div>
                   <h1 className="text-gray-900 font-bold text-lg">
                     DewanAmbalan
@@ -207,7 +210,7 @@ export default function Navbar() {
                       ),
                     },
                     {
-                      href: "#strukure",
+                      href: "#strukture",
                       label: "Anggota",
                       icon: (
                         <svg

@@ -87,7 +87,7 @@ export default function About() {
                   <div className="p-8 lg:p-10 flex items-center">
                     <div>
                       <h3 className="font-poppins font-bold text-2xl lg:text-3xl text-gray-900 leading-tight">
-                        Meninggalkan Jejak <br /> untuk Mengukir Sejarah
+                        Meninggalkan Jejak untuk Mengukir Sejarah
                       </h3>
                       <div className="mt-4 w-20 h-1 bg-gradient-green rounded-full"></div>
                     </div>

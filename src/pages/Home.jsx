@@ -36,7 +36,7 @@ export default function Home() {
           <span className="text-sm font-medium">Welcome to Our Community</span>
         </div>
 
-        <h1 className="font-poppins font-bold text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl leading-tight mb-6 animate-fadeSlideUp" style={{animationDelay: "0.3s"}}>
+        <h1 className="font-poppins font-bold text-5xl md:text-6xl lg:text-7xl xl:text-8xl 2xl:text-7xl leading-tight mb-2 lg:mb-6 animate-fadeSlideUp" style={{animationDelay: "0.3s"}}>
           {homeData.tittle}
         </h1>
         <p className="font-poppins text-base md:text-lg lg:text-xl text-gray-200 max-w-3xl mx-auto mb-8 leading-relaxed animate-fadeSlideUp" style={{animationDelay: "0.4s"}}>
@@ -48,7 +48,7 @@ export default function Home() {
             Jelajahi
           </Button>
           <Button variant="secondary" href="#strukture">
-            Learn More
+            Anggota
           </Button>
         </div>
 
