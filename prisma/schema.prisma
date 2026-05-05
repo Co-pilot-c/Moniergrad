@@ -32,15 +32,17 @@ model Hero {
 // MODEL: STRUKTUR ORGANISASI
 // ============================================
 model Struktur {
-  id          String   @id @default(cuid())
-  title       String
-  role        String
-  image       String?
-  angkatan    String   @default("51")
-  order       Int      @default(1)
-  active      Boolean  @default(true)
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  id              String   @id @default(cuid())
+  title           String
+  role            String
+  image           String?
+  angkatan        String   @default("51")
+  angkatanImage   String?  @map("angkatan_image")
+  angkatanStatus  String   @default("Aktif") @map("angkatan_status")
+  order           Int      @default(1)
+  active          Boolean  @default(true)
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
 
   @@map("strukturs")
 }

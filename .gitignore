@@ -1,4 +1,4 @@
 .env
 .env.example
 node_modules
-prisma
+# prisma - jangan ignore schema
