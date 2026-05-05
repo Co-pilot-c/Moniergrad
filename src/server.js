@@ -33,8 +33,33 @@ const uploadsStaticDir = isVercel ? '/tmp/uploads' : path.join(__dirname, '..', 
 app.use('/uploads', express.static(uploadsStaticDir));
 
 // Health check
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'OK', timestamp: new Date().toISOString() });
+app.get('/api/health', async (req, res) => {
+  try {
+    // Test database connection
+    await prisma.$queryRaw`SELECT 1`;
+    res.json({ 
+      status: 'OK', 
+      timestamp: new Date().toISOString(),
+      database: 'connected',
+      env: {
+        node_env: process.env.NODE_ENV,
+        has_database_url: !!process.env.DATABASE_URL,
+        is_vercel: isVercel
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      status: 'ERROR', 
+      timestamp: new Date().toISOString(),
+      database: 'disconnected',
+      error: error.message,
+      env: {
+        node_env: process.env.NODE_ENV,
+        has_database_url: !!process.env.DATABASE_URL,
+        is_vercel: isVercel
+      }
+    });
+  }
 });
 
 // ============================================
@@ -48,7 +73,8 @@ app.get('/api/hero', async (req, res) => {
     });
     res.json(heroes);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Hero GET Error:', error);
+    res.status(500).json({ error: error.message, stack: error.stack });
   }
 });
 
