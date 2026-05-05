@@ -20,6 +20,10 @@ model Hero {
   description   String   @db.Text
   maskotImage   String?  @map("maskot_image")
   bgGradient    String   @default("from-white via-sky-100 to-sky-300") @map("bg_gradient")
+  btn1Text      String   @default("Jelajahi") @map("btn1_text")
+  btn1Link      String   @default("#about") @map("btn1_link")
+  btn2Text      String   @default("Anggota") @map("btn2_text")
+  btn2Link      String   @default("#strukture") @map("btn2_link")
   order         Int      @default(1)
   active        Boolean  @default(true)
   createdAt     DateTime @default(now()) @map("created_at")

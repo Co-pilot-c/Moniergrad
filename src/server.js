@@ -418,47 +418,62 @@ app.delete('/api/navigation/:id', async (req, res) => {
   }
 });
 
-// File Upload with Multer
+// File Upload dengan Cloudinary (persistent storage)
 const multer = require('multer');
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const fs = require('fs');
 
-// Use /tmp for Vercel (writable), local for development
-const uploadsDir = isVercel 
-  ? '/tmp/uploads' 
-  : path.join(__dirname, '..', 'uploads');
+// Konfigurasi Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'tunakarya',
+  api_key: process.env.CLOUDINARY_API_KEY || '',
+  api_secret: process.env.CLOUDINARY_API_SECRET || '',
+});
 
-// Create uploads directory if not exists (only for local)
-if (!isVercel && !fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
+// Cek apakah Cloudinary dikonfigurasi
+const hasCloudinary = !!(process.env.CLOUDINARY_API_KEY || '');
+
+let upload;
+
+if (hasCloudinary) {
+  // Pakai Cloudinary untuk persistent storage
+  const storage = new CloudinaryStorage({
+    cloudinary,
+    params: {
+      folder: 'tunakarya',
+      allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
+      transformation: [{ quality: 'auto', fetch_format: 'auto' }],
+    },
+  });
+  upload = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 } });
+} else {
+  // Fallback: simpan ke /tmp (tidak persistent di Vercel, tapi OK untuk dev)
+  const uploadsDir = isVercel ? '/tmp/uploads' : path.join(__dirname, '..', 'uploads');
+  if (!isVercel && !fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+  }
+  const diskStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      if (isVercel && !fs.existsSync(uploadsDir)) {
+        fs.mkdirSync(uploadsDir, { recursive: true });
+      }
+      cb(null, uploadsDir);
+    },
+    filename: (req, file, cb) => {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+      cb(null, uniqueSuffix + '-' + file.originalname);
+    },
+  });
+  upload = multer({
+    storage: diskStorage,
+    fileFilter: (req, file, cb) => {
+      if (file.mimetype.startsWith('image/')) cb(null, true);
+      else cb(new Error('Only image files are allowed!'), false);
+    },
+    limits: { fileSize: 5 * 1024 * 1024 },
+  });
 }
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    // Ensure /tmp/uploads exists for Vercel
-    if (isVercel && !fs.existsSync(uploadsDir)) {
-      fs.mkdirSync(uploadsDir, { recursive: true });
-    }
-    cb(null, uploadsDir);
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, uniqueSuffix + '-' + file.originalname);
-  }
-});
-
-const fileFilter = (req, file, cb) => {
-  if (file.mimetype.startsWith('image/')) {
-    cb(null, true);
-  } else {
-    cb(new Error('Only image files are allowed!'), false);
-  }
-};
-
-const upload = multer({ 
-  storage: storage,
-  fileFilter: fileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
-});
 
 // Upload endpoint
 app.post('/api/upload', upload.single('file'), (req, res) => {
@@ -466,17 +481,19 @@ app.post('/api/upload', upload.single('file'), (req, res) => {
     if (!req.file) {
       return res.status(400).json({ error: 'No file uploaded' });
     }
-    
-    // Return full URL for uploaded file
-    const protocol = req.headers['x-forwarded-proto'] || req.protocol;
-    const host = req.headers.host;
-    const fileUrl = `${protocol}://${host}/uploads/${req.file.filename}`;
-    
-    res.json({ 
+
+    // Cloudinary returns path as secure_url, disk returns filename
+    const fileUrl = req.file.path || (() => {
+      const protocol = req.headers['x-forwarded-proto'] || req.protocol;
+      const host = req.headers.host;
+      return `${protocol}://${host}/uploads/${req.file.filename}`;
+    })();
+
+    res.json({
       message: 'File uploaded successfully',
-      filename: req.file.filename,
+      filename: req.file.filename || req.file.public_id,
       url: fileUrl,
-      size: req.file.size
+      size: req.file.size,
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
