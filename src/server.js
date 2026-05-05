@@ -351,9 +351,57 @@ app.delete('/api/navigation/:id', async (req, res) => {
   }
 });
 
-// Upload endpoint (placeholder - untuk implementasi file upload)
-app.post('/api/upload', async (req, res) => {
-  res.json({ message: 'Upload functionality - implement with multer' });
+// File Upload with Multer
+const multer = require('multer');
+const fs = require('fs');
+
+// Create uploads directory if not exists
+const uploadsDir = path.join(__dirname, '..', 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, uploadsDir);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, uniqueSuffix + '-' + file.originalname);
+  }
+});
+
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith('image/')) {
+    cb(null, true);
+  } else {
+    cb(new Error('Only image files are allowed!'), false);
+  }
+};
+
+const upload = multer({ 
+  storage: storage,
+  fileFilter: fileFilter,
+  limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
+});
+
+// Upload endpoint
+app.post('/api/upload', upload.single('file'), (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+    
+    const fileUrl = `/uploads/${req.file.filename}`;
+    res.json({ 
+      message: 'File uploaded successfully',
+      filename: req.file.filename,
+      url: fileUrl,
+      size: req.file.size
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 // Error handling
