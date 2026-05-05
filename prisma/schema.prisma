@@ -1,0 +1,106 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// MODEL: HERO / HOME SECTION
+// ============================================
+model Hero {
+  id            String   @id @default(cuid())
+  title         String
+  subtitle      String?
+  description   String   @db.Text
+  maskotImage   String?  @map("maskot_image")
+  bgGradient    String   @default("from-white via-sky-100 to-sky-300") @map("bg_gradient")
+  order         Int      @default(1)
+  active        Boolean  @default(true)
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@map("heroes")
+}
+
+// ============================================
+// MODEL: STRUKTUR ORGANISASI
+// ============================================
+model Struktur {
+  id          String   @id @default(cuid())
+  title       String
+  role        String
+  image       String?
+  angkatan    String   @default("51")
+  order       Int      @default(1)
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("strukturs")
+}
+
+// ============================================
+// MODEL: PURNA KARYA / ALUMNI
+// ============================================
+model Purna {
+  id          String   @id @default(cuid())
+  title       String
+  angkatan    String
+  profile     String?
+  quotes      String   @db.Text
+  order       Int      @default(1)
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("purnas")
+}
+
+// ============================================
+// MODEL: PROGRAM KERJA
+// ============================================
+model Program {
+  id          String   @id @default(cuid())
+  title       String
+  description String   @db.Text
+  image       String?
+  order       Int      @default(1)
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("programs")
+}
+
+// ============================================
+// MODEL: SITE SETTINGS
+// ============================================
+model SiteSettings {
+  id          String   @id @default(cuid())
+  siteTitle   String   @map("site_title")
+  siteDescription String @map("site_description")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("site_settings")
+}
+
+// ============================================
+// MODEL: NAVIGATION MENU
+// ============================================
+model Navigation {
+  id          String   @id @default(cuid())
+  label       String
+  url         String
+  order       Int      @default(1)
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("navigations")
+}
