@@ -22,7 +22,12 @@ const app = express();
 // Middleware
 app.use(helmet());
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: [
+    process.env.FRONTEND_URL || 'http://localhost:5173',
+    'https://web-tunakarya.vercel.app',
+    'http://localhost:5173',
+    'http://localhost:4173',
+  ],
   credentials: true
 }));
 app.use(express.json());
