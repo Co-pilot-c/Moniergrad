@@ -1,5 +1,5 @@
 export default function Button({ type = "Button", onClick, href, children, variant = "primary" }) {
-    const baseClasses = "px-6 py-3 rounded-full font-medium transition-all duration-400 transform hover:scale-105 shadow-soft hover:shadow-medium";
+    const baseClasses = "px-5 py-2 md:px-5 py-2 text-sm md:text-lg rounded-full font-medium transition-all duration-400 transform hover:scale-105 shadow-soft hover:shadow-medium";
     
     const variantClasses = {
         primary: "bg-gradient-green text-white shadow-green hover:shadow-medium",

@@ -23,9 +23,9 @@ export default function About() {
         <div className="grid lg:grid-cols-2 gap-16 lg:gap-20 items-center">
           {/* Left Content */}
           <div className="space-y-8 animate-fadeSlideIn">
-            <div className="space-y-4">
+            <div className="space-y-4 text-center">
               <Tagline>Tentang Kami</Tagline>
-              <Tittle>{aboutData.tittle}</Tittle>
+              <Tittle size="medium">{aboutData.tittle}</Tittle>
               <Description style="justify">
                 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Rem
                 officia mollitia magnam recusandae sequi? Ipsam assumenda
@@ -84,7 +84,7 @@ export default function About() {
                     alt="About us"
                     className="w-full lg:w-1/2 h-93 lg:h-auto object-cover"
                   />
-                  <div className="p-8 lg:p-10 flex items-center">
+                  <div className="p-2 lg:px-4 lg:py-5 flex items-center">
                     <div>
                       <h3 className="font-poppins font-bold text-2xl lg:text-3xl text-gray-900 leading-tight">
                         Meninggalkan Jejak untuk Mengukir Sejarah

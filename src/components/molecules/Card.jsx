@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 export default function Card({ image, nama, bidang }) {
   return (
-    <div className="bg-white rounded-2xl w-72 shadow-soft group hover:shadow-medium transition-all duration-400 transform hover:scale-105 overflow-hidden">
+    <div className="bg-white rounded-2xl w-50 shadow-soft group hover:shadow-medium transition-all duration-400 transform hover:scale-105 overflow-hidden">
       <div className="relative">
         <div className="p-4">
           <div className="relative overflow-hidden aspect-square rounded-xl">

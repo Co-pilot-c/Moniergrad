@@ -33,17 +33,17 @@ export default function Home() {
         {/* Badge */}
         <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/20 mb-6 animate-scaleIn">
           <span className="w-2 h-2 bg-primary-400 rounded-full animate-pulse"></span>
-          <span className="text-sm font-medium">Welcome to Our Community</span>
+          <span className="text-sm md:text-md font-medium">Welcome to Our Community</span>
         </div>
 
-        <h1 className="font-poppins font-bold text-5xl md:text-6xl lg:text-7xl xl:text-8xl 2xl:text-7xl leading-tight mb-2 lg:mb-6 animate-fadeSlideUp" style={{animationDelay: "0.3s"}}>
+        <h1 className="font-poppins font-bold text-2xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl max-w-3xl xl:max-w-4xl leading-tight mb-2 lg:mb-6 animate-fadeSlideUp" style={{animationDelay: "0.3s"}}>
           {homeData.tittle}
         </h1>
-        <p className="font-poppins text-base md:text-lg lg:text-xl text-gray-200 max-w-3xl mx-auto mb-8 leading-relaxed animate-fadeSlideUp" style={{animationDelay: "0.4s"}}>
+        <p className="font-poppins text-sm sm:text-base md:text-md lg:text-lg text-gray-200 max-w-2xl mx-auto mb-8 leading-relaxed animate-fadeSlideUp" style={{animationDelay: "0.4s"}}>
           {homeData.description}
         </p>
         
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fadeSlideUp" style={{animationDelay: "0.5s"}}>
+        <div className="flex flex-row sm:flex-row gap-4 justify-center items-center animate-fadeSlideUp" style={{animationDelay: "0.5s"}}>
           <Button variant="primary" href="#about">
             Jelajahi
           </Button>

@@ -78,9 +78,9 @@ export default function Program() {
 
           {/* Content */}
           <div className="space-y-8 animate-fadeSlideUp">
-            <div className="space-y-4">
+            <div className="space-y-4 text-center">
               <Tagline>Program Kami</Tagline>
-              <div className="flex justify-between items-start">
+              <div className="flex justify-between text-left items-start">
                 <div>
                   <Tittle>{current.title}</Tittle>
                   <Subtitle>{current.subtitle}</Subtitle>

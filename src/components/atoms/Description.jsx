@@ -14,7 +14,7 @@ export default function Description({ children, style = "center", size = "base" 
 
   return (
     <p
-      className={`font-poppins ${sizes[size]} mx-auto mt-3 text-gray-600 leading-relaxed ${styles[style]} animate-fadeSlideUp`}
+      className={`font-poppins ${sizes[size]} px-2 mx-auto mt-3 text-gray-600 leading-relaxed ${styles[style]} animate-fadeSlideUp`}
       style={{animationDelay: "0.2s"}}
     >
       {children}

@@ -45,23 +45,23 @@ export default function Navbar() {
     <>
       <nav
         className={`z-50 transition-all duration-400 ease-out
-    ${isHome && !isScrolled ? "absolute top-8 w-full" : "w-11/12 lg:w-5/6 bg-white/95 backdrop-blur-md rounded-full shadow-soft fixed top-4 left-1/2 -translate-x-1/2"}`}
+    ${isHome && !isScrolled ? "absolute top-8 w-full" : "w-11/12 lg:w-5/6 bg-white/5 backdrop-blur-md rounded-full shadow-soft fixed top-4 left-1/2 -translate-x-1/2"}`}
       >
         <div
           className={`relative flex items-center justify-between transition-all duration-400
-        ${isScrolled ? "px-10 py-3" : "px-12 lg:px-32 py-5"}`}
+        ${isScrolled ? "px-10 py-3" : "px-12 lg:px-24"}`}
         >
           {/* LOGO */}
           {!isFotografer && (
-            <div className="flex items-center gap-10 group">
+            <div className="flex items-center gap-5 md:gap-8 group">
               <div
-                className={`w-8 h-8 rounded-full flex gap-2 items-center justify-center transition-all duration-400 group-hover:scale-110 ${isScrolled ? "" : ""}`}
+                className={`w-5 h-5 md:w-8 rounded-full flex gap-1 items-center justify-center transition-all duration-400 group-hover:scale-110 ${isScrolled ? "" : ""}`}
               >
                 <img src={Monierson} alt="" />
                 <img src={Gradison} alt="" />
               </div>
               <h1
-                className={`text-sm md:text-lg font-bold transition-colors duration-400
+                className={`hidden text-sm md:text-md font-bold transition-colors duration-400
                 ${isScrolled ? "text-gray-900" : "text-white"}`}
               >
                 DewanAmbalan
@@ -73,7 +73,7 @@ export default function Navbar() {
           {!isFotografer && (
             <div
               className={`hidden md:flex absolute left-1/2 -translate-x-1/2 gap-1
-          ${isScrolled ? "text-gray-900" : "text-white"}`}
+          ${isScrolled ? "text-gray-900" : "text-white "}`}
             >
               <NavMenu currentPath={location.pathname} />
             </div>
@@ -84,7 +84,7 @@ export default function Navbar() {
             {/* CONTACT (DESKTOP) */}
             <Link
               to="/contact"
-              className={`hidden md:block px-6 py-2.5 rounded-full font-medium transition-all duration-400 transform hover:scale-105 ${
+              className={`hidden md:block px-4 py-1 rounded-full font-medium transition-all duration-400 transform hover:scale-105 ${
                 isScrolled
                   ? "bg-gradient-green text-white shadow-green hover:shadow-medium"
                   : "bg-white/20 backdrop-blur-sm text-white border border-white/30 hover:bg-white hover:text-gray-900"
@@ -96,14 +96,14 @@ export default function Navbar() {
             {/* HAMBURGER */}
             <button
               onClick={() => setOpen(!open)}
-              className={`md:hidden p-2 rounded-lg transition-all duration-400 relative w-10 h-10 flex items-center justify-center ${
+              className={`md:hidden px-2 py-4 rounded-lg transition-all duration-400 relative w-10 h-5 flex items-center ${
                 isScrolled
                   ? "text-gray-900 hover:bg-gray-100"
                   : "text-white hover:bg-white/20"
               }`}
               aria-label="Toggle menu"
             >
-              <div className="w-6 h-5 flex flex-col justify-between relative">
+              <div className="w-6 h-4 flex flex-col justify-between relative">
                 <span
                   className={`block h-0.5 w-full transition-all duration-300 origin-left ${open ? "rotate-45 translate-y-1.5" : ""} ${isScrolled ? "bg-gray-900" : "bg-white"}`}
                 ></span>
@@ -139,7 +139,7 @@ export default function Navbar() {
           />
 
           {/* Mobile Menu Panel */}
-          <div className="fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-white z-[70] shadow-large animate-slideIn">
+          <div className="fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-white/80 rounded-l-3xl backdrop-blur-md z-[70] shadow-soft animate-slideIn">
             <div className="h-full flex flex-col">
               {/* Header */}
               <div className="flex justify-between items-center px-6 pt-12 border-b border-gray-100">
@@ -149,12 +149,12 @@ export default function Navbar() {
                     <img src={Gradison} alt="" />
                   </div>
                   <h1 className="text-gray-900 font-bold text-lg">
-                    DewanAmbalan
+                    Dewan Ambalan
                   </h1>
                 </div>
                 <button
                   onClick={() => setOpen(false)}
-                  className="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-all duration-300 transform hover:scale-110"
+                  className="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-100 flex items-center justify-center transition-all duration-300 transform hover:scale-110"
                   aria-label="Close menu"
                 >
                   <svg
