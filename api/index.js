@@ -15,7 +15,6 @@
 
 const express = require('express');
 const helmet = require('helmet');
-const path = require('path');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
