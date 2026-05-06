@@ -31,9 +31,6 @@ export default function Footer() {
           {/* Brand */}
           <div className="lg:col-span-1">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 rounded-full bg-gradient-green flex items-center justify-center shadow-green">
-                <span className="text-white font-bold text-lg">DA</span>
-              </div>
               <h1 className="text-xl lg:text-2xl font-bold text-gray-900">
                 {footerData.brandName}
               </h1>
