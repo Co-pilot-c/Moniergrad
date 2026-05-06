@@ -1,146 +1,220 @@
-/**
- * Seed dummy data untuk testing CMS
- * Jalankan: node src/seed.js
- */
+const { PrismaClient } = require('@prisma/client');
+const bcrypt = require('bcryptjs');
 require('dotenv').config();
 
-if (!process.env.DATABASE_URL) {
-  process.env.DATABASE_URL = "postgresql://neondb_owner:npg_eTyj9Z5aRVlA@ep-withered-tooth-ant0kwmh-pooler.c-6.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require";
-}
-
-const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('🌱 Seeding dummy data...\n');
+  console.log('🌱 Seeding database...');
 
-  // Clear existing data
-  await prisma.hero.deleteMany();
-  await prisma.angkatan.deleteMany();
-  await prisma.struktur.deleteMany();
-  await prisma.purna.deleteMany();
-  await prisma.program.deleteMany();
-  await prisma.siteSettings.deleteMany();
-  console.log('✓ Cleared existing data');
-
-  // ── HERO ──────────────────────────────────────────
-  await prisma.hero.create({
-    data: {
-      title: 'Dewan Ambalan Monierson & Gradison',
-      subtitle: 'SMKN 1 Majalengka',
-      description: 'Membangun generasi pramuka yang berkarakter, berprestasi, dan berdedikasi untuk bangsa dan negara.',
-      btn1Text: 'Jelajahi',
-      btn1Link: '#about',
-      btn2Text: 'Lihat Anggota',
-      btn2Link: '#strukture',
-      order: 1,
-      active: true,
-    },
-  });
-  console.log('✓ Hero seeded');
-
-  // ── ANGKATAN ──────────────────────────────────────
-  const angkatanData = [
-    {
-      nama: '51',
-      status: 'Menjabat',
-      description: 'Angkatan ke-51 Dewan Ambalan Monierson & Gradison SMKN 1 Majalengka, saat ini sedang menjabat.',
-      order: 1,
-    },
-    {
-      nama: '50',
-      status: 'Demisioner',
-      description: 'Angkatan ke-50 Dewan Ambalan Monierson & Gradison SMKN 1 Majalengka, telah demisioner.',
-      order: 2,
-    },
-    {
-      nama: '49',
-      status: 'Demisioner',
-      description: 'Angkatan ke-49 Dewan Ambalan Monierson & Gradison SMKN 1 Majalengka.',
-      order: 3,
-    },
-  ];
-  for (const a of angkatanData) {
-    await prisma.angkatan.create({ data: { ...a, active: true } });
+  // ============================================
+  // ADMIN
+  // ============================================
+  const existingAdmin = await prisma.admin.findFirst();
+  if (!existingAdmin) {
+    const hashed = await bcrypt.hash('admin123', 12);
+    await prisma.admin.create({
+      data: {
+        username: 'admin',
+        password: hashed,
+        name: 'Administrator CMS',
+      }
+    });
+    console.log('✅ Admin created: admin / admin123');
+  } else {
+    console.log('ℹ️  Admin already exists');
   }
-  console.log('✓ Angkatan seeded (3 angkatan)');
 
-  // ── STRUKTUR ──────────────────────────────────────
-  const strukturData = [
-    { title: 'Raka Prasetya', role: 'Pradana Putra', angkatan: '51', angkatanStatus: 'Menjabat', order: 1 },
-    { title: 'Alfath Rizky', role: 'Pradana Putri', angkatan: '51', angkatanStatus: 'Menjabat', order: 2 },
-    { title: 'Dimas Saputra', role: 'Pemangku Adat', angkatan: '51', angkatanStatus: 'Menjabat', order: 3 },
-    { title: 'Siti Nurhaliza', role: 'Kerani', angkatan: '51', angkatanStatus: 'Menjabat', order: 4 },
-    { title: 'Budi Santoso', role: 'Bendahara', angkatan: '51', angkatanStatus: 'Menjabat', order: 5 },
-    { title: 'Ahmad Fauzi', role: 'Pradana Putra', angkatan: '50', angkatanStatus: 'Demisioner', order: 1 },
-    { title: 'Dewi Rahayu', role: 'Pradana Putri', angkatan: '50', angkatanStatus: 'Demisioner', order: 2 },
-  ];
-  for (const s of strukturData) {
-    await prisma.struktur.create({ data: { ...s, active: true } });
+  // ============================================
+  // HERO
+  // ============================================
+  const heroCount = await prisma.hero.count();
+  if (heroCount === 0) {
+    await prisma.hero.create({
+      data: {
+        title: 'Dewan Ambalan Monierson & Gradison',
+        subtitle: 'Selamat Datang',
+        description: 'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Minus, distinctio natus. Adipisci necessitatibus a consectetur.',
+        badgeText: 'Welcome to Our Community',
+        btn1Text: 'Jelajahi',
+        btn1Link: '#about',
+        btn2Text: 'Anggota',
+        btn2Link: '#strukture',
+        order: 1,
+        active: true,
+      }
+    });
+    console.log('✅ Hero seeded');
   }
-  console.log('✓ Struktur seeded (7 anggota, 2 angkatan)');
 
-  // ── PURNA ─────────────────────────────────────────
-  const purnaData = [
-    {
-      title: 'Bang Jaja',
-      angkatan: 'Angkatan 49',
-      quotes: 'Pramuka mengajarkan saya arti tanggung jawab dan kepemimpinan sejati. Pengalaman di Dewan Ambalan tidak akan pernah terlupakan.',
-      order: 1,
-    },
-    {
-      title: 'Kak Rizky',
-      angkatan: 'Angkatan 50',
-      quotes: 'Dari sinilah saya belajar bahwa kerja keras dan kebersamaan adalah kunci kesuksesan. Terima kasih Moniergrad!',
-      order: 2,
-    },
-    {
-      title: 'Kak Sari',
-      angkatan: 'Angkatan 48',
-      quotes: 'Dewan Ambalan membentuk karakter saya menjadi pribadi yang lebih disiplin dan bertanggung jawab.',
-      order: 3,
-    },
-  ];
-  for (const p of purnaData) {
-    await prisma.purna.create({ data: { ...p, active: true } });
+  // ============================================
+  // ABOUT
+  // ============================================
+  const aboutCount = await prisma.about.count();
+  if (aboutCount === 0) {
+    await prisma.about.create({
+      data: {
+        tagline: 'Tentang Kami',
+        title: 'Wadah untuk Menampung Ide dan Gagasan',
+        description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Rem officia mollitia magnam recusandae sequi? Ipsam assumenda facilis, repellendus quaerat, magnam repudiandae ducimus, dolores eum hic veniam soluta sit perferendis nulla.',
+        imageQuote: 'Meninggalkan Jejak untuk Mengukir Sejarah',
+        visiTitle: 'Visi',
+        visiContent: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Laborum porro ad sed neque reiciendis corporis, consequatur, molestiae ea saepe inventore quis aut cupiditate fugit adipisci, voluptatibus tenetur dolores esse quibusdam.',
+        misiTitle: 'Misi',
+        misiItems: JSON.stringify([
+          'Lorem ipsum dolor sit amet.',
+          'Lorem ipsum dolor, sit amet consectetur.',
+          'Lorem ipsum dolor, sit amet consectetur.',
+          'Lorem ipsum dolor sit amet consectetur.',
+        ]),
+        active: true,
+      }
+    });
+    console.log('✅ About seeded');
   }
-  console.log('✓ Purna seeded (3 alumni)');
 
-  // ── PROGRAM ───────────────────────────────────────
-  const programData = [
-    {
-      title: 'PECAPA 2025',
-      description: 'Pelantikan Calon Penegak — kegiatan sakral yang menandai perjalanan anggota baru memasuki jenjang Penegak dalam Dewan Ambalan Monierson & Gradison.',
-      order: 1,
-    },
-    {
-      title: 'Kemah Bakti',
-      description: 'Kegiatan kemah bakti sosial yang dilaksanakan di desa binaan, meliputi kegiatan bersih lingkungan, penyuluhan kesehatan, dan pemberdayaan masyarakat.',
-      order: 2,
-    },
-    {
-      title: 'Latihan Rutin',
-      description: 'Latihan kepramukaan mingguan yang mencakup baris-berbaris, tali-temali, sandi, dan pengembangan soft skill kepemimpinan.',
-      order: 3,
-    },
-  ];
-  for (const p of programData) {
-    await prisma.program.create({ data: { ...p, active: true } });
+  // ============================================
+  // STATS
+  // ============================================
+  const statsCount = await prisma.stats.count();
+  if (statsCount === 0) {
+    const statsData = [
+      // About section stats
+      { value: '120', suffix: '+', label: 'Active', isText: false, order: 1, section: 'about' },
+      { value: '92', suffix: 'K', label: 'Users', isText: false, order: 2, section: 'about' },
+      { value: '25', suffix: '%', label: 'Growth', isText: false, order: 3, section: 'about' },
+      { value: '12', suffix: 'K+', label: 'Testimonials', isText: false, order: 4, section: 'about' },
+      // Program section stats
+      { value: '120', suffix: '+', label: 'Active', isText: false, order: 1, section: 'program' },
+      { value: '92', suffix: 'K', label: 'Users', isText: false, order: 2, section: 'program' },
+      { value: '25', suffix: '%', label: 'Growth', isText: false, order: 3, section: 'program' },
+      { value: '12', suffix: 'K+', label: 'Testimonials', isText: false, order: 4, section: 'program' },
+    ];
+    await prisma.stats.createMany({ data: statsData });
+    console.log('✅ Stats seeded');
   }
-  console.log('✓ Program seeded (3 program)');
 
-  // ── SETTINGS ──────────────────────────────────────
-  await prisma.siteSettings.create({
-    data: {
-      siteTitle: 'Dewan Ambalan Monierson & Gradison',
-      siteDescription: 'Website resmi Dewan Ambalan Monierson & Gradison SMKN 1 Majalengka',
-    },
-  });
-  console.log('✓ Settings seeded');
+  // ============================================
+  // ANGKATAN
+  // ============================================
+  const angkatanCount = await prisma.angkatan.count();
+  if (angkatanCount === 0) {
+    const angkatan1 = await prisma.angkatan.create({
+      data: {
+        nama: '50/14',
+        status: 'Demisioner',
+        description: 'Angkatan pertama dari Dewan Ambalan Monierson & Gradison',
+        order: 1,
+        active: true,
+      }
+    });
+    const angkatan2 = await prisma.angkatan.create({
+      data: {
+        nama: '51/15',
+        status: 'Alumni',
+        description: 'Angkatan kedua yang melanjutkan warisan dengan prestasi gemilang.',
+        order: 2,
+        active: true,
+      }
+    });
+    const angkatan3 = await prisma.angkatan.create({
+      data: {
+        nama: '52/16',
+        status: 'Aktif',
+        description: 'Angkatan aktif yang sedang mengukir prestasi.',
+        order: 3,
+        active: true,
+      }
+    });
+    console.log('✅ Angkatan seeded');
+  }
 
-  console.log('\n✅ Seeding complete!');
+  // ============================================
+  // PURNA
+  // ============================================
+  const purnaCount = await prisma.purna.count();
+  if (purnaCount === 0) {
+    await prisma.purna.create({
+      data: {
+        title: 'Alfath',
+        angkatan: 'Angkatan 51',
+        quotes: 'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Velit quisquam similique voluptates explicabo mollitia numquam! Labore iusto officia aliquam cum, aliquid eaque provident soluta illum dignissimos! Pariatur quos sit odio.',
+        order: 1,
+        active: true,
+      }
+    });
+    console.log('✅ Purna seeded');
+  }
+
+  // ============================================
+  // PROGRAM
+  // ============================================
+  const programCount = await prisma.program.count();
+  if (programCount === 0) {
+    await prisma.program.createMany({
+      data: [
+        {
+          title: 'PECABA 2025',
+          subtitle: 'Pelantikan Calon Bantara',
+          description: 'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Fuga voluptates nihil dolores sunt ipsam veniam neque repudiandae minus illum voluptas officiis hic, necessitatibus ullam, reprehenderit sint architecto praesentium sequi quaerat inventore obcaecati voluptatum?',
+          images: JSON.stringify([]),
+          order: 1,
+          active: true,
+        },
+        {
+          title: 'Perlak',
+          subtitle: 'Pelantikan Calon Bantara',
+          description: 'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Fuga voluptates nihil dolores sunt ipsam veniam neque repudiandae minus illum voluptas officiis hic, necessitatibus ullam.',
+          images: JSON.stringify([]),
+          order: 2,
+          active: true,
+        },
+      ]
+    });
+    console.log('✅ Program seeded');
+  }
+
+  // ============================================
+  // FOOTER
+  // ============================================
+  const footerCount = await prisma.footer.count();
+  if (footerCount === 0) {
+    await prisma.footer.create({
+      data: {
+        brandName: 'DewanAmbalan',
+        brandDesc: 'Membangun generasi kreatif dan berprestasi melalui kolaborasi dan inovasi untuk masa depan yang lebih baik.',
+        email: 'dewanambalan@email.com',
+        phone: '+62 812 3456 7890',
+        address: 'Majalengka, Indonesia',
+        copyrightText: 'Dewan Ambalan. All rights reserved.',
+        active: true,
+      }
+    });
+    console.log('✅ Footer seeded');
+  }
+
+  // ============================================
+  // SITE SETTINGS
+  // ============================================
+  const settingsCount = await prisma.siteSettings.count();
+  if (settingsCount === 0) {
+    await prisma.siteSettings.create({
+      data: {
+        siteTitle: 'Dewan Ambalan Monierson & Gradison',
+        siteDescription: 'Website resmi Dewan Ambalan Monierson & Gradison',
+      }
+    });
+    console.log('✅ Site settings seeded');
+  }
+
+  console.log('🎉 Seeding complete!');
 }
 
 main()
-  .catch(e => { console.error('❌ Seed error:', e); process.exit(1); })
-  .finally(() => prisma.$disconnect());
+  .catch((e) => {
+    console.error('❌ Seed error:', e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });

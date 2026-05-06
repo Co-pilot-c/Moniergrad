@@ -11,6 +11,20 @@ datasource db {
 }
 
 // ============================================
+// MODEL: ADMIN USER (untuk CMS login)
+// ============================================
+model Admin {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  password  String
+  name      String   @default("Administrator")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("admins")
+}
+
+// ============================================
 // MODEL: HERO / HOME SECTION
 // ============================================
 model Hero {
@@ -18,8 +32,8 @@ model Hero {
   title         String
   subtitle      String?
   description   String   @db.Text
-  maskotImage   String?  @map("maskot_image")
-  bgGradient    String   @default("from-white via-sky-100 to-sky-300") @map("bg_gradient")
+  badgeText     String   @default("Welcome to Our Community") @map("badge_text")
+  bgImage       String?  @map("bg_image")
   btn1Text      String   @default("Jelajahi") @map("btn1_text")
   btn1Link      String   @default("#about") @map("btn1_link")
   btn2Text      String   @default("Anggota") @map("btn2_text")
@@ -33,21 +47,83 @@ model Hero {
 }
 
 // ============================================
+// MODEL: ABOUT SECTION
+// ============================================
+model About {
+  id              String   @id @default(cuid())
+  tagline         String   @default("Tentang Kami")
+  title           String
+  description     String   @db.Text
+  imageUrl        String?  @map("image_url")
+  imageQuote      String?  @map("image_quote")
+  visiTitle       String   @default("Visi") @map("visi_title")
+  visiContent     String   @db.Text @map("visi_content")
+  misiTitle       String   @default("Misi") @map("misi_title")
+  misiItems       String   @db.Text @map("misi_items") // JSON array string
+  active          Boolean  @default(true)
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@map("abouts")
+}
+
+// ============================================
+// MODEL: STATS (120+, 92K, 25%, 12K+)
+// ============================================
+model Stats {
+  id        String   @id @default(cuid())
+  value     String   // bisa angka atau text: "120", "92K", "Aktif"
+  suffix    String   @default("") // "+", "K", "%", "K+"
+  label     String   // "Active", "Users", "Growth"
+  isText    Boolean  @default(false) @map("is_text") // jika true, tampilkan value as-is tanpa animasi
+  order     Int      @default(1)
+  active    Boolean  @default(true)
+  section   String   @default("about") // "about" atau "program"
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("stats")
+}
+
+// ============================================
 // MODEL: ANGKATAN (PERIODE ORGANISASI)
-// Dikelola terpisah dari anggota struktur
 // ============================================
 model Angkatan {
   id          String   @id @default(cuid())
-  nama        String                          // "51", "50/14", dll
-  status      String   @default("Aktif")      // Aktif, Demisioner, Menjabat
-  image       String?                         // URL foto background (Cloudinary)
+  nama        String
+  status      String   @default("Aktif")
+  image       String?
   description String?  @db.Text
   order       Int      @default(1)
   active      Boolean  @default(true)
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
+  members     AnggotaAngkatan[]
+
   @@map("angkatans")
+}
+
+// ============================================
+// MODEL: ANGGOTA ANGKATAN
+// ============================================
+model AnggotaAngkatan {
+  id          String   @id @default(cuid())
+  angkatanId  String   @map("angkatan_id")
+  name        String
+  position    String
+  image       String?
+  bidang      String   @default("Umum")
+  instagram   String?
+  linkedin    String?
+  order       Int      @default(1)
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  angkatan    Angkatan @relation(fields: [angkatanId], references: [id], onDelete: Cascade)
+
+  @@map("anggota_angkatans")
 }
 
 // ============================================
@@ -92,8 +168,9 @@ model Purna {
 model Program {
   id          String   @id @default(cuid())
   title       String
+  subtitle    String?
   description String   @db.Text
-  image       String?
+  images      String   @db.Text @default("[]") // JSON array of image URLs
   order       Int      @default(1)
   active      Boolean  @default(true)
   createdAt   DateTime @default(now()) @map("created_at")
@@ -103,13 +180,34 @@ model Program {
 }
 
 // ============================================
+// MODEL: FOOTER
+// ============================================
+model Footer {
+  id              String   @id @default(cuid())
+  brandName       String   @default("DewanAmbalan") @map("brand_name")
+  brandDesc       String   @db.Text @map("brand_desc")
+  facebookUrl     String?  @map("facebook_url")
+  twitterUrl      String?  @map("twitter_url")
+  instagramUrl    String?  @map("instagram_url")
+  email           String?
+  phone           String?
+  address         String?
+  copyrightText   String?  @map("copyright_text")
+  active          Boolean  @default(true)
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@map("footers")
+}
+
+// ============================================
 // MODEL: SITE SETTINGS
 // ============================================
 model SiteSettings {
-  id          String   @id @default(cuid())
-  siteTitle   String   @map("site_title")
-  siteDescription String @map("site_description")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  id              String   @id @default(cuid())
+  siteTitle       String   @map("site_title")
+  siteDescription String   @map("site_description")
+  updatedAt       DateTime @updatedAt @map("updated_at")
 
   @@map("site_settings")
 }
