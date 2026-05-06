@@ -2,9 +2,8 @@
   "name": "tunakarya-cms-api",
   "version": "4.0.0",
   "description": "CMS API for Dewan Ambalan — Pure serverless, no Express",
-  "main": "api/index.js",
   "scripts": {
-    "dev": "node -e \"require('dotenv').config(); const h=require('./api/index'); require('http').createServer(h).listen(3000, ()=>console.log('Dev server: http://localhost:3000'))\"",
+    "dev": "node -e \"require('dotenv').config(); const h=require('./api/index'); require('http').createServer(h).listen(3000, ()=>console.log('Dev: http://localhost:3000'))\"",
     "build": "npx prisma generate",
     "db:push": "npx prisma db push",
     "db:seed": "node src/seed.js",
@@ -22,6 +21,6 @@
     "prisma": "^5.8.0"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": "18.x"
   }
 }

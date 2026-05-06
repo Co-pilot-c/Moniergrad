@@ -1,14 +1,7 @@
 {
   "version": 2,
   "buildCommand": "npx prisma generate",
-  "functions": {
-    "index.js": {
-      "memory": 512,
-      "maxDuration": 30,
-      "includeFiles": "prisma/**"
-    }
-  },
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.js" }
+    { "source": "/(.*)", "destination": "/api/index.js" }
   ]
 }
