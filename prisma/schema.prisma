@@ -33,6 +33,24 @@ model Hero {
 }
 
 // ============================================
+// MODEL: ANGKATAN (PERIODE ORGANISASI)
+// Dikelola terpisah dari anggota struktur
+// ============================================
+model Angkatan {
+  id          String   @id @default(cuid())
+  nama        String                          // "51", "50/14", dll
+  status      String   @default("Aktif")      // Aktif, Demisioner, Menjabat
+  image       String?                         // URL foto background (Cloudinary)
+  description String?  @db.Text
+  order       Int      @default(1)
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("angkatans")
+}
+
+// ============================================
 // MODEL: STRUKTUR ORGANISASI
 // ============================================
 model Struktur {

@@ -155,6 +155,61 @@ app.delete('/api/hero/:id', async (req, res) => {
 });
 
 // ============================================
+// ROUTES: ANGKATAN
+// ============================================
+app.get('/api/angkatan', async (req, res) => {
+  try {
+    const angkatans = await prisma.angkatan.findMany({
+      where: { active: true },
+      orderBy: { order: 'asc' }
+    });
+    res.json(angkatans);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/angkatan/:id', async (req, res) => {
+  try {
+    const angkatan = await prisma.angkatan.findUnique({ where: { id: req.params.id } });
+    if (!angkatan) return res.status(404).json({ error: 'Not found' });
+    res.json(angkatan);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/api/angkatan', async (req, res) => {
+  try {
+    const angkatan = await prisma.angkatan.create({ data: req.body });
+    res.status(201).json(angkatan);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.put('/api/angkatan/:id', async (req, res) => {
+  try {
+    const angkatan = await prisma.angkatan.update({
+      where: { id: req.params.id },
+      data: req.body
+    });
+    res.json(angkatan);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.delete('/api/angkatan/:id', async (req, res) => {
+  try {
+    await prisma.angkatan.delete({ where: { id: req.params.id } });
+    res.json({ message: 'Deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ============================================
 // ROUTES: STRUKTUR
 // ============================================
 app.get('/api/struktur', async (req, res) => {

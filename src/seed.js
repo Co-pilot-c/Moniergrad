@@ -16,6 +16,7 @@ async function main() {
 
   // Clear existing data
   await prisma.hero.deleteMany();
+  await prisma.angkatan.deleteMany();
   await prisma.struktur.deleteMany();
   await prisma.purna.deleteMany();
   await prisma.program.deleteMany();
@@ -37,6 +38,32 @@ async function main() {
     },
   });
   console.log('✓ Hero seeded');
+
+  // ── ANGKATAN ──────────────────────────────────────
+  const angkatanData = [
+    {
+      nama: '51',
+      status: 'Menjabat',
+      description: 'Angkatan ke-51 Dewan Ambalan Monierson & Gradison SMKN 1 Majalengka, saat ini sedang menjabat.',
+      order: 1,
+    },
+    {
+      nama: '50',
+      status: 'Demisioner',
+      description: 'Angkatan ke-50 Dewan Ambalan Monierson & Gradison SMKN 1 Majalengka, telah demisioner.',
+      order: 2,
+    },
+    {
+      nama: '49',
+      status: 'Demisioner',
+      description: 'Angkatan ke-49 Dewan Ambalan Monierson & Gradison SMKN 1 Majalengka.',
+      order: 3,
+    },
+  ];
+  for (const a of angkatanData) {
+    await prisma.angkatan.create({ data: { ...a, active: true } });
+  }
+  console.log('✓ Angkatan seeded (3 angkatan)');
 
   // ── STRUKTUR ──────────────────────────────────────
   const strukturData = [
