@@ -1,20 +1,78 @@
 import { HashLink } from "react-router-hash-link";
 import Angkatan from "../pages/Angkatan";
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, Link, useSearchParams } from "react-router-dom";
 import Card from "../components/molecules/Card";
 import { useEffect, useState } from "react";
+import { angkatanAPI } from "../utils/api.js";
 
 export default function Profile() {
   const { state } = useLocation();
-  const data = state?.data;
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [selectedBidang, setSelectedBidang] = useState("Seluruh");
 
   useEffect(() => {
     const el = document.getElementById("angkatan");
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth" });
-    }
+    if (el) el.scrollIntoView({ behavior: "smooth" });
   }, []);
+
+  useEffect(() => {
+    // Jika ada angkatan ID dari state, fetch fresh dari API
+    const angkatanId = state?.data?.id;
+
+    if (angkatanId && !angkatanId.startsWith("dummy-")) {
+      // Fetch dari API untuk data terbaru (termasuk anggota)
+      angkatanAPI.getById(angkatanId)
+        .then((apiData) => {
+          if (apiData) {
+            const formatted = {
+              id: apiData.id,
+              angkatan: apiData.nama,
+              status: apiData.status,
+              image: apiData.image || null,
+              description: apiData.description || "",
+              members: (apiData.members || []).map((m) => ({
+                id: m.id,
+                name: m.name,
+                position: m.position,
+                image: m.image || null,
+                bidang: m.bidang,
+                instagram: m.instagram || null,
+                social: {
+                  instagram: m.instagram || "",
+                  linkedin: m.linkedin || "",
+                },
+              })),
+            };
+            setData(formatted);
+          } else {
+            // Fallback ke state data jika API gagal
+            setData(state?.data || null);
+          }
+        })
+        .catch(() => {
+          setData(state?.data || null);
+        })
+        .finally(() => setLoading(false));
+    } else if (state?.data) {
+      // Gunakan state data langsung (dummy atau tidak ada ID)
+      setData(state.data);
+      setLoading(false);
+    } else {
+      setLoading(false);
+    }
+  }, [state]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-green-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-500">Memuat data...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!data) {
     return (
@@ -23,10 +81,7 @@ export default function Profile() {
           <h1 className="text-2xl font-bold text-gray-900 mb-4">
             Data tidak ditemukan
           </h1>
-          <Link
-            to="/#strukture"
-            className="text-primary-600 hover:text-primary-700"
-          >
+          <Link to="/#strukture" className="text-primary-600 hover:text-primary-700">
             ← Kembali ke Struktur
           </Link>
         </div>
@@ -106,6 +161,7 @@ export default function Profile() {
                   image={member.image}
                   nama={member.name}
                   bidang={member.bidang}
+                  instagram={member.instagram || member.social?.instagram}
                 />
               </div>
             ))}

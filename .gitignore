@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# Env files — .env.production is committed for Vercel build
+.env
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

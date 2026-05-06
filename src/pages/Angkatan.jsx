@@ -518,10 +518,7 @@ export default function Angkatan({
 
         {mode === "detail" && (
           <p className="w-3/3 text-xs lg:w-1/2 lg:text-base">
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Aut
-            dolores repudiandae tenetur iusto quas libero laboriosam ipsam ipsum
-            a explicabo, obcaecati harum soluta dolorum, magni laudantium nemo
-            illum quidem officia.
+            {dataAngkatan?.description || ""}
           </p>
         )}
 

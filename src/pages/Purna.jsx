@@ -2,25 +2,70 @@ import { useState, useEffect } from "react";
 import Title from "../components/atoms/Tittle";
 import Description from "../components/atoms/Description";
 import CardCom from "../components/molecules/CardCom";
-import { fetchContent } from "../utils/contentLoader.js";
+import { purnaAPI, ctaAPI } from "../utils/api.js";
 import defaultProfile from "../assets/vector/orangk.jpg";
 
 export default function Purna() {
   const [testimonials, setTestimonials] = useState([]);
+  const [cta, setCta] = useState({
+    title: "Bergabunglah dengan Keluarga Besar Dewan Ambalan",
+    description: "Jadilah bagian dari perjalanan inspiratif dan bentuk karakter kepemimpinanmu bersama kami.",
+    btn1Text: "Bergabung Sekarang",
+    btn1Link: "#",
+    btn1Style: "primary",
+    btn2Text: "Pelajari Lebih Lanjut",
+    btn2Link: "#",
+    btn2Style: "secondary",
+  });
 
   useEffect(() => {
-    const loadPurnaData = async () => {
-      const purnaItems = await fetchContent("purna");
-      const formattedItems = purnaItems.map(item => ({
-        profile: item.profile || defaultProfile,
-        name: item.title,
-        purna: item.angkatan,
-        quetes: item.quotes,
-      }));
-      setTestimonials(formattedItems);
-    };
-    loadPurnaData();
+    purnaAPI.getAll()
+      .then((data) => {
+        if (data && data.length > 0) {
+          const formatted = data.map((item) => ({
+            id: item.id,
+            profile: item.profile || defaultProfile,
+            name: item.title,
+            purna: item.angkatan,
+            quetes: item.quotes,
+          }));
+          setTestimonials(formatted);
+        }
+      })
+      .catch(() => {});
+
+    ctaAPI.get()
+      .then((data) => { if (data) setCta(data); })
+      .catch(() => {});
   }, []);
+
+  // Helper: resolve link (support wa.me, instagram, hash, url)
+  const resolveLink = (link) => {
+    if (!link || link === "#") return "#";
+    return link;
+  };
+
+  const BtnPrimary = ({ text, link }) => (
+    <a
+      href={resolveLink(link)}
+      target={link && link !== "#" && !link.startsWith("#") ? "_blank" : "_self"}
+      rel="noopener noreferrer"
+      className="px-8 py-3 bg-gradient-green text-white rounded-full font-medium shadow-green hover:shadow-medium transition-all duration-400 transform hover:scale-105 inline-block text-center"
+    >
+      {text}
+    </a>
+  );
+
+  const BtnSecondary = ({ text, link }) => (
+    <a
+      href={resolveLink(link)}
+      target={link && link !== "#" && !link.startsWith("#") ? "_blank" : "_self"}
+      rel="noopener noreferrer"
+      className="px-8 py-3 bg-white text-gray-900 border border-gray-200 rounded-full font-medium hover:border-primary-500 hover:bg-primary-50 transition-all duration-400 inline-block text-center"
+    >
+      {text}
+    </a>
+  );
 
   return (
     <section
@@ -42,51 +87,58 @@ export default function Purna() {
         </div>
 
         {/* Horizontal Auto-scroll Container */}
-        <div className="relative overflow-hidden pb-20 hide-scrollbar">
-          <div className="flex space-x-6 animate-scroll">
-            {testimonials.map((item, index) => (
-              <div key={index} className="flex-shrink-0 w-full max-w-md lg:max-w-lg">
-                <CardCom
-                  profile={item.profile}
-                  name={item.name}
-                  purna={item.purna}
-                  quetes={item.quetes}
-                />
-              </div>
-            ))}
-            {/* Duplicate cards for seamless loop */}
-            {testimonials.map((item, index) => (
-              <div
-                key={`dup-${index}`}
-                className="flex-shrink-0 w-full max-w-md lg:max-w-lg"
-              >
-                <CardCom
-                  profile={item.profile}
-                  name={item.name}
-                  purna={item.purna}
-                  quetes={item.quetes}
-                />
-              </div>
-            ))}
+        {testimonials.length > 0 ? (
+          <div className="relative overflow-hidden pb-20 hide-scrollbar">
+            <div className="flex space-x-6 animate-scroll">
+              {testimonials.map((item, index) => (
+                <div key={index} className="flex-shrink-0 w-full max-w-md lg:max-w-lg">
+                  <CardCom
+                    profile={item.profile}
+                    name={item.name}
+                    purna={item.purna}
+                    quetes={item.quetes}
+                  />
+                </div>
+              ))}
+              {/* Duplicate cards for seamless loop */}
+              {testimonials.map((item, index) => (
+                <div key={`dup-${index}`} className="flex-shrink-0 w-full max-w-md lg:max-w-lg">
+                  <CardCom
+                    profile={item.profile}
+                    name={item.name}
+                    purna={item.purna}
+                    quetes={item.quetes}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="text-center py-12 text-gray-400">
+            <p>Belum ada kata purna.</p>
+          </div>
+        )}
 
-        {/* Call to Action */}
+        {/* Call to Action — fully dynamic from CMS */}
         <div className="text-center mt-16 animate-fadeSlideUp">
           <div className="bg-white rounded-3xl shadow-soft p-8 lg:p-12 max-w-4xl mx-auto">
             <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-4">
-              Bergabunglah dengan Keluarga Besar Dewan Ambalan
+              {cta.title}
             </h3>
             <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
-              Jadilah bagian dari perjalanan inspiratif dan bentuk karakter kepemimpinanmu bersama kami.
+              {cta.description}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="px-8 py-3 bg-gradient-green text-white rounded-full font-medium shadow-green hover:shadow-medium transition-all duration-400 transform hover:scale-105">
-                Bergabung Sekarang
-              </button>
-              <button className="px-8 py-3 bg-white text-gray-900 border border-gray-200 rounded-full font-medium hover:border-primary-500 hover:bg-primary-50 transition-all duration-400">
-                Pelajari Lebih Lanjut
-              </button>
+              {cta.btn1Style === "primary" ? (
+                <BtnPrimary text={cta.btn1Text} link={cta.btn1Link} />
+              ) : (
+                <BtnSecondary text={cta.btn1Text} link={cta.btn1Link} />
+              )}
+              {cta.btn2Style === "primary" ? (
+                <BtnPrimary text={cta.btn2Text} link={cta.btn2Link} />
+              ) : (
+                <BtnSecondary text={cta.btn2Text} link={cta.btn2Link} />
+              )}
             </div>
           </div>
         </div>

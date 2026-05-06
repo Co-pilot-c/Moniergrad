@@ -1,64 +1,82 @@
-import maskot from "../assets/vector/maskot.png";
-import Tittle from "../components/atoms/Tittle.jsx";
+import { useState, useEffect } from "react";
 import Button from "../components/atoms/Button.jsx";
-import Description from "../components/atoms/Description.jsx";
-import Maskot from "../assets/vector/Maskot.png";
-import Score from "../components/atoms/Score.jsx";
 import bg_home from "../assets/images/bg_home.jpeg";
+import { heroAPI } from "../utils/api.js";
 
 export default function Home() {
-  const homeData = {
-    tittle: "Dewan Ambalan Monierson & Gradison",
-    description:
-      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Minus, distinctio natus. Adipisci necessitatibus a consectetur.",
-  };
+  const [heroData, setHeroData] = useState({
+    title: "Dewan Ambalan Monierson & Gradison",
+    description: "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Minus, distinctio natus. Adipisci necessitatibus a consectetur.",
+    badgeText: "Welcome to Our Community",
+    btn1Text: "Jelajahi",
+    btn1Link: "#about",
+    btn2Text: "Anggota",
+    btn2Link: "#strukture",
+    bgImage: null,
+  });
+
+  useEffect(() => {
+    heroAPI.getAll()
+      .then((data) => {
+        if (data && data.length > 0) {
+          setHeroData(data[0]);
+        }
+      })
+      .catch(() => {
+        // fallback ke data default jika API tidak tersedia
+      });
+  }, []);
+
+  const bgStyle = heroData.bgImage
+    ? { backgroundImage: `url(${heroData.bgImage})`, backgroundSize: "cover", backgroundPosition: "center", backgroundAttachment: "fixed" }
+    : { backgroundImage: `url(${bg_home})`, backgroundSize: "cover", backgroundPosition: "center", backgroundAttachment: "fixed" };
 
   return (
     <section
       id="home"
       className="relative min-h-screen flex justify-center items-center m-4 lg:mx-10 rounded-3xl overflow-hidden animate-fadeIn"
-      style={{
-        backgroundImage: `url(${bg_home})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundAttachment: "fixed",
-      }}
+      style={bgStyle}
     >
       <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-black/50 to-black/70" />
-      
-      {/* Decorative gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-t from-primary-900/20 to-transparent" />
 
       <div className="relative z-10 text-center text-white max-w-5xl mx-auto px-6 animate-fadeSlideUp">
         {/* Badge */}
         <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/20 mb-6 animate-scaleIn">
           <span className="w-2 h-2 bg-primary-400 rounded-full animate-pulse"></span>
-          <span className="text-sm md:text-md font-medium">Welcome to Our Community</span>
+          <span className="text-sm md:text-md font-medium">{heroData.badgeText || "Welcome to Our Community"}</span>
         </div>
 
-        <h1 className="font-poppins font-bold text-2xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl max-w-3xl xl:max-w-4xl leading-tight mb-2 lg:mb-6 animate-fadeSlideUp" style={{animationDelay: "0.3s"}}>
-          {homeData.tittle}
+        <h1
+          className="font-poppins font-bold text-2xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl max-w-3xl xl:max-w-4xl leading-tight mb-2 lg:mb-6 animate-fadeSlideUp mx-auto"
+          style={{ animationDelay: "0.3s" }}
+        >
+          {heroData.title}
         </h1>
-        <p className="font-poppins text-sm sm:text-base md:text-md lg:text-lg text-gray-200 max-w-2xl mx-auto mb-8 leading-relaxed animate-fadeSlideUp" style={{animationDelay: "0.4s"}}>
-          {homeData.description}
+        <p
+          className="font-poppins text-sm sm:text-base md:text-md lg:text-lg text-gray-200 max-w-2xl mx-auto mb-8 leading-relaxed animate-fadeSlideUp"
+          style={{ animationDelay: "0.4s" }}
+        >
+          {heroData.description}
         </p>
-        
-        <div className="flex flex-row sm:flex-row gap-4 justify-center items-center animate-fadeSlideUp" style={{animationDelay: "0.5s"}}>
-          <Button variant="primary" href="#about">
-            Jelajahi
+
+        <div
+          className="flex flex-row sm:flex-row gap-4 justify-center items-center animate-fadeSlideUp"
+          style={{ animationDelay: "0.5s" }}
+        >
+          <Button variant="primary" href={heroData.btn1Link || "#about"}>
+            {heroData.btn1Text || "Jelajahi"}
           </Button>
-          <Button variant="secondary" href="#strukture">
-            Anggota
+          <Button variant="secondary" href={heroData.btn2Link || "#strukture"}>
+            {heroData.btn2Text || "Anggota"}
           </Button>
         </div>
-
-        
       </div>
 
       {/* Floating elements */}
       <div className="absolute top-20 left-10 w-20 h-20 bg-primary-400/10 rounded-full blur-xl animate-pulse"></div>
-      <div className="absolute bottom-20 right-10 w-32 h-32 bg-primary-500/10 rounded-full blur-xl animate-pulse" style={{animationDelay: "1s"}}></div>
-      <div className="absolute top-1/2 left-1/4 w-16 h-16 bg-primary-300/10 rounded-full blur-xl animate-pulse" style={{animationDelay: "0.5s"}}></div>
+      <div className="absolute bottom-20 right-10 w-32 h-32 bg-primary-500/10 rounded-full blur-xl animate-pulse" style={{ animationDelay: "1s" }}></div>
+      <div className="absolute top-1/2 left-1/4 w-16 h-16 bg-primary-300/10 rounded-full blur-xl animate-pulse" style={{ animationDelay: "0.5s" }}></div>
     </section>
   );
 }

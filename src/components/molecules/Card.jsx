@@ -1,6 +1,4 @@
-import { Link } from "react-router-dom";
-
-export default function Card({ image, nama, bidang }) {
+export default function Card({ image, nama, bidang, instagram }) {
   return (
     <div className="bg-white rounded-2xl w-50 shadow-soft group hover:shadow-medium transition-all duration-400 transform hover:scale-105 overflow-hidden">
       <div className="relative">
@@ -10,6 +8,7 @@ export default function Card({ image, nama, bidang }) {
               src={image}
               alt={nama}
               className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
+              onError={(e) => { e.target.style.display = 'none'; }}
             />
             <div className="absolute inset-0 bg-gradient-green opacity-0 group-hover:opacity-10 transition-opacity duration-400"></div>
           </div>
@@ -25,8 +24,8 @@ export default function Card({ image, nama, bidang }) {
             </div>
             <div className="ml-4">
               <a
-                href="https://instagram.com/alfathriz.ky"
-                target="_blank"
+                href={instagram || "#"}
+                target={instagram ? "_blank" : "_self"}
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-gradient-green hover:text-white transition-all duration-400 transform hover:scale-110"
               >
