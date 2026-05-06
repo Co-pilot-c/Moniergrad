@@ -1,9 +1,7 @@
 'use strict';
 /**
- * index.js — Vercel Serverless Handler (root entrypoint)
- *
- * Vercel auto-detects this file. No Express, no app.listen.
- * All routes handled in one file to prevent accidental deletion.
+ * api/index.js — Pure serverless handler for Vercel
+ * Exports: module.exports = async function handler(req, res)
  */
 
 const { PrismaClient } = require('@prisma/client');
