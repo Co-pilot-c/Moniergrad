@@ -59,7 +59,7 @@ export default function About() {
         <div className="grid lg:grid-cols-2 gap-16 lg:gap-20 lg:items-stretch">
 
           {/* ── Kolom Kiri ── */}
-          <div className="flex flex-col justify-between gap-8 animate-fadeSlideIn">
+          <div className="flex flex-col gap-8 animate-fadeSlideIn">
             {/* Teks atas */}
             <div className="space-y-4 text-center">
               <Tagline>{aboutData.tagline || "Tentang Kami"}</Tagline>
@@ -67,8 +67,8 @@ export default function About() {
               <Description style="justify">{aboutData.description}</Description>
             </div>
 
-            {/* Stats — selalu di bawah, sejajar dengan visi-misi */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+            {/* Stats — mt-auto mendorong ke bawah sejajar visi-misi */}
+            <div className="mt-auto grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
               {stats.map((stat, index) => (
                 <div key={stat.id || index} className="text-center group">
                   <div className="bg-gradient-green-light/10 rounded-2xl p-5 transition-all duration-400 group-hover:shadow-green group-hover:scale-105">
@@ -85,7 +85,7 @@ export default function About() {
           </div>
 
           {/* ── Kolom Kanan ── */}
-          <div className="flex flex-col justify-between gap-6 animate-fadeSlideUp">
+          <div className="flex flex-col gap-6 animate-fadeSlideUp">
             {/* Gambar + kutipan */}
             <div className="relative group">
               <div className="absolute inset-0 bg-gradient-green opacity-10 rounded-3xl blur-xl group-hover:opacity-20 transition-opacity duration-400"></div>
@@ -109,8 +109,8 @@ export default function About() {
               </div>
             </div>
 
-            {/* Visi & Misi — selalu di bawah, sejajar dengan stats */}
-            <div className="grid md:grid-cols-2 gap-6">
+            {/* Visi & Misi — mt-auto mendorong ke bawah sejajar stats */}
+            <div className="mt-auto grid md:grid-cols-2 gap-6">
               {/* Visi */}
               <div className="group">
                 <div className="bg-gradient-green rounded-3xl p-7 text-white transition-all duration-400 hover:shadow-medium hover:scale-105 relative overflow-hidden h-full">

@@ -69,7 +69,7 @@ export default function Program() {
         <div className="grid lg:grid-cols-2 gap-16 lg:gap-20 lg:items-stretch">
 
           {/* ── Kolom Kiri: Gambar ── */}
-          <div className="flex flex-col justify-between gap-6 animate-fadeSlideIn">
+          <div className="flex flex-col gap-6 animate-fadeSlideIn">
             <div className="flex flex-col gap-6">
               {current.images.map((image, i) => (
                 <div key={i} className="relative group">
@@ -86,8 +86,8 @@ export default function Program() {
               ))}
             </div>
 
-            {/* Indikator — di bawah gambar */}
-            <div className="flex justify-center gap-2">
+            {/* Indikator — mt-auto mendorong ke bawah */}
+            <div className="mt-auto flex justify-center gap-2">
               {programs.map((_, index) => (
                 <button
                   key={index}
@@ -101,7 +101,7 @@ export default function Program() {
           </div>
 
           {/* ── Kolom Kanan: Konten ── */}
-          <div className="flex flex-col justify-between gap-6 animate-fadeSlideUp">
+          <div className="flex flex-col gap-6 animate-fadeSlideUp">
             {/* Header + deskripsi */}
             <div className="space-y-4">
               <div className="text-center">
@@ -134,8 +134,8 @@ export default function Program() {
               <Description style="justify">{current.description}</Description>
             </div>
 
-            {/* Stats — di bawah, sejajar dengan indikator gambar */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* Stats — mt-auto mendorong ke bawah sejajar indikator */}
+            <div className="mt-auto grid grid-cols-2 lg:grid-cols-4 gap-4">
               {stats.map((stat, index) => (
                 <div key={stat.id || index} className="text-center group">
                   <div className="bg-gradient-green-light/10 rounded-2xl p-5 transition-all duration-400 group-hover:shadow-green group-hover:scale-105">
