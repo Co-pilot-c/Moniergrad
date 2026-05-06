@@ -1,20 +1,16 @@
 {
   "version": 2,
-  "buildCommand": "prisma generate && prisma db push --accept-data-loss",
+  "buildCommand": "npx prisma generate && npx prisma db push --accept-data-loss",
   "builds": [
     {
       "src": "src/server.js",
       "use": "@vercel/node",
       "config": {
-        "includeFiles": ["prisma/**"]
+        "includeFiles": ["prisma/**", "prisma/schema.prisma"]
       }
     }
   ],
   "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/src/server.js"
-    },
     {
       "src": "/(.*)",
       "dest": "/src/server.js"

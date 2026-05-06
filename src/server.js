@@ -46,9 +46,13 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Static files untuk uploads
+// Static files untuk uploads — serve seluruh folder uploads
 const uploadsStaticDir = isVercel ? '/tmp/uploads' : path.join(__dirname, '..', 'uploads');
-app.use('/uploads', express.static(uploadsStaticDir));
+app.use('/uploads', express.static(uploadsStaticDir, {
+  setHeaders: (res) => {
+    res.set('Cross-Origin-Resource-Policy', 'cross-origin');
+  }
+}));
 
 // ============================================
 // AUTH MIDDLEWARE
@@ -589,6 +593,33 @@ app.delete('/api/program/:id', authMiddleware, async (req, res) => {
 });
 
 // ============================================
+// ROUTES: CTA SECTION
+// ============================================
+app.get('/api/cta', async (req, res) => {
+  try {
+    const cta = await prisma.cta.findFirst({ where: { active: true } });
+    res.json(cta || null);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.put('/api/cta', authMiddleware, async (req, res) => {
+  try {
+    const existing = await prisma.cta.findFirst();
+    let cta;
+    if (existing) {
+      cta = await prisma.cta.update({ where: { id: existing.id }, data: req.body });
+    } else {
+      cta = await prisma.cta.create({ data: req.body });
+    }
+    res.json(cta);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ============================================
 // ROUTES: FOOTER
 // ============================================
 app.get('/api/footer', async (req, res) => {
@@ -704,28 +735,32 @@ let upload;
 if (hasCloudinary) {
   const storage = new CloudinaryStorage({
     cloudinary,
-    params: {
-      folder: 'tunakarya',
+    params: (req, file) => ({
+      folder: `tunakarya/${req.query.folder || 'general'}`,
       allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
       transformation: [{ quality: 'auto', fetch_format: 'auto' }],
-    },
+    }),
   });
   upload = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 } });
 } else {
-  const uploadsDir = isVercel ? '/tmp/uploads' : path.join(__dirname, '..', 'uploads');
-  if (!isVercel && !fs.existsSync(uploadsDir)) {
-    fs.mkdirSync(uploadsDir, { recursive: true });
-  }
+  const baseUploadsDir = isVercel ? '/tmp/uploads' : path.join(__dirname, '..', 'uploads');
+  
   const diskStorage = multer.diskStorage({
     destination: (req, file, cb) => {
-      if (isVercel && !fs.existsSync(uploadsDir)) {
-        fs.mkdirSync(uploadsDir, { recursive: true });
+      // Support subfolder via ?folder=members|angkatan|program|purna
+      const subfolder = req.query.folder || 'general';
+      const allowedFolders = ['members', 'angkatan', 'program', 'purna', 'general'];
+      const safeFolder = allowedFolders.includes(subfolder) ? subfolder : 'general';
+      const dest = path.join(baseUploadsDir, safeFolder);
+      if (!fs.existsSync(dest)) {
+        fs.mkdirSync(dest, { recursive: true });
       }
-      cb(null, uploadsDir);
+      cb(null, dest);
     },
     filename: (req, file, cb) => {
       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-      cb(null, uniqueSuffix + '-' + file.originalname);
+      const ext = path.extname(file.originalname).toLowerCase();
+      cb(null, uniqueSuffix + ext);
     },
   });
   upload = multer({
@@ -743,11 +778,20 @@ app.post('/api/upload', authMiddleware, upload.single('file'), (req, res) => {
     if (!req.file) {
       return res.status(400).json({ error: 'No file uploaded' });
     }
-    const fileUrl = req.file.path || (() => {
+
+    let fileUrl;
+    if (req.file.path && req.file.path.startsWith('http')) {
+      // Cloudinary URL
+      fileUrl = req.file.path;
+    } else {
+      // Local disk — return path relative to /uploads/
+      const baseUploadsDir = isVercel ? '/tmp/uploads' : path.join(__dirname, '..', 'uploads');
+      const relativePath = path.relative(baseUploadsDir, req.file.path).replace(/\\/g, '/');
       const protocol = req.headers['x-forwarded-proto'] || req.protocol;
       const host = req.headers.host;
-      return `${protocol}://${host}/uploads/${req.file.filename}`;
-    })();
+      fileUrl = `${protocol}://${host}/uploads/${relativePath}`;
+    }
+
     res.json({
       message: 'File uploaded successfully',
       filename: req.file.filename || req.file.public_id,

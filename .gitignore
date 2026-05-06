@@ -1,4 +1,5 @@
 .env
-.env.example
 node_modules
-# prisma - jangan ignore schema
+# Keep uploads folder structure but ignore actual uploaded files
+uploads/**/*
+!uploads/**/.gitkeep

@@ -213,6 +213,26 @@ model SiteSettings {
 }
 
 // ============================================
+// MODEL: CTA SECTION (Call to Action di Purna)
+// ============================================
+model Cta {
+  id          String   @id @default(cuid())
+  title       String   @default("Bergabunglah dengan Keluarga Besar Dewan Ambalan")
+  description String   @db.Text @default("Jadilah bagian dari perjalanan inspiratif dan bentuk karakter kepemimpinanmu bersama kami.")
+  btn1Text    String   @default("Bergabung Sekarang") @map("btn1_text")
+  btn1Link    String   @default("#") @map("btn1_link")
+  btn1Style   String   @default("primary") @map("btn1_style") // "primary" | "secondary"
+  btn2Text    String   @default("Pelajari Lebih Lanjut") @map("btn2_text")
+  btn2Link    String   @default("#") @map("btn2_link")
+  btn2Style   String   @default("secondary") @map("btn2_style")
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("ctas")
+}
+
+// ============================================
 // MODEL: NAVIGATION MENU
 // ============================================
 model Navigation {

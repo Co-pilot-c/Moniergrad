@@ -6,11 +6,12 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
-    "build": "prisma generate",
-    "db:push": "prisma db push",
-    "db:migrate": "prisma migrate dev",
-    "db:studio": "prisma studio",
-    "vercel-build": "prisma generate && echo 'Build complete'"
+    "build": "npx prisma generate",
+    "db:push": "npx prisma db push",
+    "db:migrate": "npx prisma migrate dev",
+    "db:studio": "npx prisma studio",
+    "db:seed": "node src/seed.js",
+    "vercel-build": "npx prisma generate && npx prisma db push --accept-data-loss && echo 'Build complete'"
   },
   "dependencies": {
     "@prisma/client": "^5.8.0",
