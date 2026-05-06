@@ -30,28 +30,26 @@ const app = express();
 app.use(helmet());
 app.use(cors({
   origin: function(origin, callback) {
-    // Allow requests with no origin (mobile apps, curl, etc.)
+    // Allow requests with no origin (curl, mobile apps, server-to-server)
     if (!origin) return callback(null, true);
-    
-    const allowedOrigins = [
-      'https://web-tunakarya.vercel.app',
-    ];
-    
+
     // Allow semua localhost (port berapapun)
     if (origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:')) {
       return callback(null, true);
     }
-    
-    if (allowedOrigins.includes(origin)) {
+
+    // Allow semua subdomain *.vercel.app (untuk preview deployments)
+    if (origin.endsWith('.vercel.app')) {
       return callback(null, true);
     }
-    
+
     // Allow custom FRONTEND_URL dari env
     if (process.env.FRONTEND_URL && origin === process.env.FRONTEND_URL) {
       return callback(null, true);
     }
-    
-    callback(new Error('Not allowed by CORS'));
+
+    // Tolak origin lain
+    callback(new Error(`CORS: origin ${origin} not allowed`));
   },
   credentials: true
 }));
