@@ -2,8 +2,11 @@ import { useEffect, useState } from "react";
 
 export default function Score({ value, suffix, label, isText = false }) {
   const strVal = String(value ?? '');
-  const parsed = parseFloat(strVal);
-  const isNumeric = !isText && strVal !== '' && !isNaN(parsed) && isFinite(parsed);
+
+  // Numerik HANYA jika seluruh string adalah angka murni (bukan "12-25 Nov", "Yonif 321", dll)
+  // Regex: opsional minus, lalu digit saja (boleh desimal)
+  const isNumeric = !isText && /^-?\d+(\.\d+)?$/.test(strVal.trim());
+  const parsed = isNumeric ? parseFloat(strVal) : 0;
 
   const [count, setCount] = useState(0);
 
@@ -20,11 +23,10 @@ export default function Score({ value, suffix, label, isText = false }) {
     return () => clearInterval(timer);
   }, [parsed, isNumeric]);
 
-  // Tampilan value + suffix untuk hitung panjang
+  // Panjang teks yang akan ditampilkan (value + suffix)
   const displayFull = (isNumeric ? String(Math.floor(parsed)) : strVal) + (suffix || '');
   const len = displayFull.length;
 
-  // Font size berdasarkan panjang — tidak ada truncate/clip
   const valueSize =
     len <= 3  ? "text-4xl lg:text-4xl" :
     len <= 5  ? "text-3xl lg:text-3xl" :
@@ -34,7 +36,6 @@ export default function Score({ value, suffix, label, isText = false }) {
 
   return (
     <div className="text-center">
-      {/* whitespace-nowrap mencegah teks wrap di tengah kata */}
       <h2 className={`font-bold bg-gradient-green bg-clip-text text-transparent whitespace-nowrap ${valueSize}`}>
         {isNumeric ? count.toLocaleString() : strVal}
         <span className="text-primary-600">{suffix}</span>
