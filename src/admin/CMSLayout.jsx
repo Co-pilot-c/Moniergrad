@@ -2,18 +2,26 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { authAPI } from "../utils/api.js";
 
-// SVG icons — minimal, 16×16, stroke-based
+// ─── SVG Icons ────────────────────────────────────────────────────────────────
 const Icons = {
   dashboard: (
     <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
-      <rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" />
-      <rect x="3" y="14" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" />
+      <rect x="3" y="3" width="7" height="7" rx="1.5" />
+      <rect x="14" y="3" width="7" height="7" rx="1.5" />
+      <rect x="3" y="14" width="7" height="7" rx="1.5" />
+      <rect x="14" y="14" width="7" height="7" rx="1.5" />
     </svg>
   ),
   hero: (
     <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
       <rect x="3" y="5" width="18" height="14" rx="2" />
-      <path d="M3 9h18" />
+      <path d="M3 9h18" strokeLinecap="round" />
+    </svg>
+  ),
+  navbar: (
+    <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+      <path d="M4 6h16M4 12h8" strokeLinecap="round" />
+      <rect x="14" y="9" width="6" height="6" rx="1" />
     </svg>
   ),
   about: (
@@ -77,10 +85,9 @@ const Icons = {
       <path d="M4 6h16M4 12h16M4 18h16" strokeLinecap="round" />
     </svg>
   ),
-  navbar: (
-    <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
-      <path d="M4 6h16M4 12h8" strokeLinecap="round" />
-      <rect x="14" y="9" width="6" height="6" rx="1" />
+  close: (
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+      <path d="M6 18L18 6M6 6l12 12" strokeLinecap="round" />
     </svg>
   ),
 };
@@ -131,105 +138,151 @@ export default function CMSLayout({ children }) {
   const activeLabel = menuItems.find((m) => isActive(m.path))?.label || "CMS";
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
-      {/* Mobile overlay */}
+    <div className="min-h-screen bg-gray-50 flex font-sans">
+
+      {/* ── Mobile overlay ── */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-20 lg:hidden"
+          className="fixed inset-0 bg-black/20 backdrop-blur-sm z-20 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
-      {/* ── Sidebar ── */}
+      {/* ══════════════════════════════════════════
+          SIDEBAR — full light mode
+      ══════════════════════════════════════════ */}
       <aside
-        className={`fixed top-0 left-0 h-full w-56 bg-gray-950 text-white z-30 transform transition-transform duration-300 lg:translate-x-0 ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } lg:static lg:transform-none flex flex-col`}
+        className={`
+          fixed top-0 left-0 h-full w-60 z-30 flex flex-col
+          bg-white border-r border-gray-200
+          transform transition-transform duration-300
+          lg:translate-x-0 lg:static lg:transform-none
+          ${sidebarOpen ? "translate-x-0 shadow-xl" : "-translate-x-full"}
+        `}
       >
         {/* Brand */}
-        <div className="px-4 py-5 border-b border-white/8">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-green-500 flex items-center justify-center font-bold text-sm flex-shrink-0">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-green-500 flex items-center justify-center text-white font-bold text-sm flex-shrink-0 shadow-sm">
               DA
             </div>
             <div className="min-w-0">
-              <p className="font-semibold text-sm leading-tight truncate">CMS Admin</p>
-              <p className="text-gray-500 text-xs truncate">Dewan Ambalan</p>
+              <p className="font-semibold text-sm text-gray-900 leading-tight">CMS Admin</p>
+              <p className="text-xs text-gray-400">Dewan Ambalan</p>
             </div>
           </div>
+          {/* Close button mobile */}
+          <button
+            onClick={() => setSidebarOpen(false)}
+            className="lg:hidden p-1 rounded-lg hover:bg-gray-100 text-gray-400 transition-colors"
+          >
+            {Icons.close}
+          </button>
         </div>
 
-        {/* Nav */}
+        {/* Navigation */}
         <nav className="flex-1 px-3 py-3 space-y-0.5 overflow-y-auto">
           {menuItems.map((item) => (
             <Link
               key={item.id}
               to={item.path}
               onClick={() => setSidebarOpen(false)}
-              className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-150 ${
-                isActive(item.path)
-                  ? "bg-green-500/15 text-green-400"
-                  : "text-gray-400 hover:bg-white/5 hover:text-gray-200"
-              }`}
+              className={`
+                flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium
+                transition-all duration-150 group
+                ${isActive(item.path)
+                  ? "bg-green-50 text-green-700 border border-green-100"
+                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                }
+              `}
             >
-              <span className="flex-shrink-0 opacity-80">{item.icon}</span>
+              <span className={`flex-shrink-0 transition-colors ${isActive(item.path) ? "text-green-600" : "text-gray-400 group-hover:text-gray-600"}`}>
+                {item.icon}
+              </span>
               <span className="truncate">{item.label}</span>
+              {isActive(item.path) && (
+                <span className="ml-auto w-1.5 h-1.5 rounded-full bg-green-500 flex-shrink-0" />
+              )}
             </Link>
           ))}
         </nav>
 
-        {/* User + Logout */}
-        <div className="px-3 py-3 border-t border-white/8 space-y-1">
+        {/* User info + Logout */}
+        <div className="px-3 py-3 border-t border-gray-100 space-y-1">
           {admin && (
-            <div className="flex items-center gap-2.5 px-3 py-2">
-              <div className="w-7 h-7 rounded-full bg-green-500/20 flex items-center justify-center text-green-400 font-bold text-xs flex-shrink-0">
+            <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-gray-50">
+              <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-700 font-bold text-sm flex-shrink-0">
                 {admin.name?.charAt(0)?.toUpperCase() || "A"}
               </div>
-              <div className="min-w-0">
-                <p className="text-xs font-medium text-white truncate">{admin.name}</p>
-                <p className="text-xs text-gray-500 truncate">{admin.username}</p>
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-semibold text-gray-900 truncate">{admin.name}</p>
+                <p className="text-xs text-gray-400 truncate">{admin.username}</p>
               </div>
             </div>
           )}
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium text-red-400 hover:bg-red-500/10 transition-all duration-150"
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-red-500 hover:bg-red-50 transition-all duration-150"
           >
-            <span className="flex-shrink-0 opacity-80">{Icons.logout}</span>
+            <span className="flex-shrink-0">{Icons.logout}</span>
             <span>Keluar</span>
           </button>
         </div>
       </aside>
 
-      {/* ── Main ── */}
-      <div className="flex-1 flex flex-col min-w-0">
-        {/* Topbar */}
-        <header className="bg-white border-b border-gray-200 px-5 py-3.5 flex items-center justify-between sticky top-0 z-10">
+      {/* ══════════════════════════════════════════
+          MAIN CONTENT
+      ══════════════════════════════════════════ */}
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+
+        {/* Topbar — sticky, mengikuti scroll */}
+        <header className="
+          sticky top-0 z-10
+          bg-white border-b border-gray-200
+          px-5 py-3.5
+          flex items-center justify-between
+          shadow-sm
+        ">
           <div className="flex items-center gap-3">
+            {/* Hamburger mobile */}
             <button
               onClick={() => setSidebarOpen(true)}
-              className="lg:hidden p-1.5 rounded-lg hover:bg-gray-100 transition-colors text-gray-600"
+              className="lg:hidden p-1.5 rounded-lg hover:bg-gray-100 transition-colors text-gray-500"
             >
               {Icons.menu}
             </button>
+
+            {/* Breadcrumb */}
             <div>
-              <h2 className="font-semibold text-gray-900 text-sm">{activeLabel}</h2>
-              <p className="text-xs text-gray-400">Kelola konten website</p>
+              <div className="flex items-center gap-1.5 text-xs text-gray-400 mb-0.5">
+                <span>CMS</span>
+                <span>/</span>
+                <span className="text-gray-600 font-medium">{activeLabel}</span>
+              </div>
+              <h1 className="font-semibold text-gray-900 text-sm leading-tight">{activeLabel}</h1>
             </div>
           </div>
+
+          {/* Right actions */}
           <a
             href="/"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-500 hover:text-green-600 hover:bg-green-50 rounded-lg transition-all duration-150 border border-gray-200 hover:border-green-200"
+            className="
+              flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium
+              text-gray-600 hover:text-green-700
+              bg-gray-50 hover:bg-green-50
+              border border-gray-200 hover:border-green-200
+              transition-all duration-150
+            "
           >
             {Icons.external}
             <span>Lihat Website</span>
           </a>
         </header>
 
-        {/* Content */}
-        <main className="flex-1 p-5 overflow-auto">
+        {/* Page content */}
+        <main className="flex-1 p-5 overflow-auto bg-gray-50">
           {children}
         </main>
       </div>
