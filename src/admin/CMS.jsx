@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import CMSLayout from "./CMSLayout.jsx";
 import CMSDashboard from "./pages/CMSDashboard.jsx";
 import CMSHero from "./pages/CMSHero.jsx";
+import CMSNavbar from "./pages/CMSNavbar.jsx";
 import CMSAbout from "./pages/CMSAbout.jsx";
 import CMSStats from "./pages/CMSStats.jsx";
 import CMSAngkatan from "./pages/CMSAngkatan.jsx";
@@ -17,6 +18,7 @@ export default function CMS() {
       <Routes>
         <Route index element={<CMSDashboard />} />
         <Route path="hero" element={<CMSHero />} />
+        <Route path="navbar" element={<CMSNavbar />} />
         <Route path="about" element={<CMSAbout />} />
         <Route path="stats" element={<CMSStats />} />
         <Route path="angkatan" element={<CMSAngkatan />} />

@@ -157,15 +157,17 @@ export const uploadAPI = {
   upload: async (file, folder = 'general') => {
     const formData = new FormData();
     formData.append('file', file);
+    const token = getToken();
+    if (!token) throw new Error('Tidak ada token. Silakan login ulang.');
+
     const res = await fetch(`${API_BASE}/api/upload?folder=${folder}`, {
       method: 'POST',
-      headers: { Authorization: `Bearer ${getToken()}` },
+      headers: { Authorization: `Bearer ${token}` },
       body: formData,
     });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({ error: res.statusText }));
-      throw new Error(err.error || `Upload failed`);
-    }
-    return res.json();
+
+    const data = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
+    if (!res.ok) throw new Error(data.error || `Upload gagal (${res.status})`);
+    return data;
   },
 };

@@ -454,6 +454,7 @@ export default function Angkatan({
   image,
   status,
   angkatan,
+  description,
   handlePrev,
   handleNext,
   mode = "simple",
@@ -518,7 +519,7 @@ export default function Angkatan({
 
         {mode === "detail" && (
           <p className="w-3/3 text-xs lg:w-1/2 lg:text-base">
-            {dataAngkatan?.description || ""}
+            {description || dataAngkatan?.description || ""}
           </p>
         )}
 

@@ -77,11 +77,18 @@ const Icons = {
       <path d="M4 6h16M4 12h16M4 18h16" strokeLinecap="round" />
     </svg>
   ),
+  navbar: (
+    <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+      <path d="M4 6h16M4 12h8" strokeLinecap="round" />
+      <rect x="14" y="9" width="6" height="6" rx="1" />
+    </svg>
+  ),
 };
 
 const menuItems = [
   { id: "dashboard", label: "Dashboard",        icon: Icons.dashboard, path: "/11.043-11.044" },
   { id: "hero",      label: "Hero / Home",       icon: Icons.hero,      path: "/11.043-11.044/hero" },
+  { id: "navbar",    label: "Navbar",            icon: Icons.navbar,    path: "/11.043-11.044/navbar" },
   { id: "about",     label: "About & Visi Misi", icon: Icons.about,     path: "/11.043-11.044/about" },
   { id: "stats",     label: "Stats",             icon: Icons.stats,     path: "/11.043-11.044/stats" },
   { id: "angkatan",  label: "Angkatan",          icon: Icons.angkatan,  path: "/11.043-11.044/angkatan" },
