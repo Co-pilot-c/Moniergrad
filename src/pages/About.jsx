@@ -90,12 +90,12 @@ export default function About() {
             <div className="relative group">
               <div className="absolute inset-0 bg-gradient-green opacity-10 rounded-3xl blur-xl group-hover:opacity-20 transition-opacity duration-400"></div>
               <div className="relative bg-white rounded-3xl shadow-soft overflow-hidden">
-                <div className="flex flex-col lg:flex-row">
+                <div className="flex flex-col">
                   <img
                     src={aboutData.imageUrl || Bg_home}
                     alt="About us"
                     loading="lazy"
-                    className="w-full lg:w-1/2 h-56 lg:h-auto object-cover"
+                    className="w-full object-cover"
                   />
                   <div className="p-4 lg:px-5 lg:py-6 flex items-center">
                     <div>
