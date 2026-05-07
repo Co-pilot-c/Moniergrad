@@ -140,7 +140,7 @@ export default function Program() {
                 <div key={stat.id || index} className="text-center group">
                   <div className="bg-gradient-green-light/10 rounded-2xl p-5 transition-all duration-400 group-hover:shadow-green group-hover:scale-105">
                     <Score
-                      value={stat.isText ? stat.value : (parseFloat(stat.value) || 0)}
+                      value={stat.value}
                       suffix={stat.suffix}
                       label={stat.label}
                       isText={stat.isText}
