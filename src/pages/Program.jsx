@@ -8,23 +8,27 @@ import Perlak1 from "../assets/images/perlak1.jpeg";
 import Score from "../components/atoms/Score";
 import { programAPI, statsAPI } from "../utils/api.js";
 
+// Default stats fallback
+const DEFAULT_STATS = [
+  { value: "120", suffix: "+", label: "Active",       isText: false },
+  { value: "92",  suffix: "K", label: "Users",        isText: false },
+  { value: "25",  suffix: "%", label: "Growth",       isText: false },
+  { value: "12",  suffix: "K+",label: "Testimonials", isText: false },
+];
+
 export default function Program() {
   const [programs, setPrograms] = useState([
     {
       images: [Perlak, Perlak1],
       title: "PECABA 2025",
       subtitle: "Pelantikan Calon Bantara",
-      description: "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Fuga voluptates nihil dolores sunt ipsam veniam neque repudiandae minus illum voluptas officiis hic, necessitatibus ullam, reprehenderit sint architecto praesentium sequi quaerat inventore obcaecati voluptatum? Reiciendis dicta maxime adipisci fugiat itaque, tempore facere dolor consequatur totam cum cumque repellendus accusamus, corporis laborum.",
+      description: "Lorem ipsum dolor sit amet consectetur, adipisicing elit.",
+      programStats: [],
     },
   ]);
 
-  const [stats, setStats] = useState([
-    { value: "120", suffix: "+", label: "Active", isText: false },
-    { value: "92", suffix: "K", label: "Users", isText: false },
-    { value: "25", suffix: "%", label: "Growth", isText: false },
-    { value: "12", suffix: "K+", label: "Testimonials", isText: false },
-  ]);
-
+  // Global stats — dipakai jika program tidak punya stats sendiri
+  const [globalStats, setGlobalStats] = useState(DEFAULT_STATS);
   const [page, setPage] = useState(0);
 
   useEffect(() => {
@@ -32,18 +36,25 @@ export default function Program() {
       .then((data) => {
         if (data && data.length > 0) {
           const formatted = data.map((p) => {
+            // Parse images
             let images = [];
             try { images = JSON.parse(p.images || "[]"); } catch { images = []; }
             if (images.length === 0) images = [Perlak, Perlak1];
-            return { ...p, images };
+
+            // Parse stats per-program (field baru di DB)
+            let programStats = [];
+            try { programStats = JSON.parse(p.stats || "[]"); } catch { programStats = []; }
+
+            return { ...p, images, programStats };
           });
           setPrograms(formatted);
         }
       })
       .catch(() => {});
 
+    // Load global stats sebagai fallback
     statsAPI.getBySection("program")
-      .then((data) => { if (data && data.length > 0) setStats(data); })
+      .then((data) => { if (data && data.length > 0) setGlobalStats(data); })
       .catch(() => {});
   }, []);
 
@@ -53,19 +64,20 @@ export default function Program() {
 
   if (!current) return null;
 
+  // Gunakan stats program jika ada, fallback ke global stats
+  const activeStats = (current.programStats && current.programStats.length > 0)
+    ? current.programStats
+    : globalStats;
+
   return (
     <section
       id="program"
       className="relative bg-white py-16 lg:py-24 px-6 lg:px-20 overflow-hidden"
     >
-      <div className="absolute top-1/2 left-0 w-96 h-96 bg-gradient-green-light opacity-10 rounded-full blur-3xl -translate-y-1/2"></div>
-      <div className="absolute bottom-0 right-0 w-64 h-64 bg-primary-200 opacity-10 rounded-full blur-2xl"></div>
+      <div className="absolute top-1/2 left-0 w-96 h-96 bg-gradient-green-light opacity-10 rounded-full blur-3xl -translate-y-1/2" />
+      <div className="absolute bottom-0 right-0 w-64 h-64 bg-primary-200 opacity-10 rounded-full blur-2xl" />
 
       <div className="relative max-w-7xl mx-auto">
-        {/*
-          Kedua kolom pakai lg:items-stretch + flex-col justify-between
-          agar stats (kanan bawah) selalu sejajar dengan indikator gambar (kiri bawah).
-        */}
         <div className="grid lg:grid-cols-2 gap-16 lg:gap-20 lg:items-stretch">
 
           {/* ── Kolom Kiri: Gambar ── */}
@@ -73,7 +85,7 @@ export default function Program() {
             <div className="flex flex-col gap-6">
               {current.images.map((image, i) => (
                 <div key={i} className="relative group">
-                  <div className="absolute inset-0 bg-gradient-green opacity-0 group-hover:opacity-10 rounded-3xl transition-opacity duration-400"></div>
+                  <div className="absolute inset-0 bg-gradient-green opacity-0 group-hover:opacity-10 rounded-3xl transition-opacity duration-400" />
                   <div className="aspect-[7/4] overflow-hidden rounded-3xl shadow-soft group-hover:shadow-medium transition-all duration-400">
                     <img
                       src={image}
@@ -86,7 +98,7 @@ export default function Program() {
               ))}
             </div>
 
-            {/* Indikator — mt-auto mendorong ke bawah */}
+            {/* Indikator */}
             <div className="mt-auto flex justify-center gap-2">
               {programs.map((_, index) => (
                 <button
@@ -134,9 +146,9 @@ export default function Program() {
               <Description style="justify">{current.description}</Description>
             </div>
 
-            {/* Stats — mt-auto mendorong ke bawah sejajar indikator */}
+            {/* Stats — per-program, fallback ke global */}
             <div className="mt-auto grid grid-cols-2 lg:grid-cols-4 gap-4">
-              {stats.map((stat, index) => (
+              {activeStats.map((stat, index) => (
                 <div key={stat.id || index} className="text-center group">
                   <div className="bg-gradient-green-light/10 rounded-2xl p-5 transition-all duration-400 group-hover:shadow-green group-hover:scale-105">
                     <Score
