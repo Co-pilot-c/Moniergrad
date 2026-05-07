@@ -147,10 +147,10 @@ export default function Program() {
             </div>
 
             {/* Stats — per-program, fallback ke global */}
-            <div className="mt-auto flex flex-wrap gap-3">
+            <div className="mt-auto flex flex-row flex-wrap justify-start gap-3">
               {activeStats.map((stat, index) => (
-                <div key={stat.id || index} className="text-center group flex-1 min-w-[80px]">
-                  <div className="bg-gradient-green-light/10 rounded-2xl px-4 py-5 transition-all duration-400 group-hover:shadow-green group-hover:scale-105 h-full">
+                <div key={stat.id || index} className="text-center group shrink-0">
+                  <div className="bg-gradient-green-light/10 rounded-2xl px-5 py-5 transition-all duration-400 group-hover:shadow-green group-hover:scale-105 inline-block">
                     <Score
                       value={stat.value}
                       suffix={stat.suffix}
