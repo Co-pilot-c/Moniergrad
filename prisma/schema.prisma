@@ -171,6 +171,7 @@ model Program {
   subtitle    String?
   description String   @db.Text
   images      String   @db.Text @default("[]") // JSON array of image URLs
+  stats       String   @db.Text @default("[]") // JSON array: [{value,suffix,label,isText}]
   order       Int      @default(1)
   active      Boolean  @default(true)
   createdAt   DateTime @default(now()) @map("created_at")

@@ -26,6 +26,41 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+// ─── Cloudinary delete helper ─────────────────────────────────────────────────
+/**
+ * Hapus gambar dari Cloudinary berdasarkan URL atau public_id.
+ * Tidak throw error jika gagal — silent fail agar delete record tetap jalan.
+ */
+async function deleteCloudinaryImage(urlOrPublicId) {
+  if (!urlOrPublicId || !process.env.CLOUDINARY_API_KEY) return;
+  try {
+    let publicId = urlOrPublicId;
+    // Jika berupa URL Cloudinary, ekstrak public_id
+    if (urlOrPublicId.startsWith('http')) {
+      // Format: https://res.cloudinary.com/{cloud}/image/upload/v{ver}/{folder}/{id}.{ext}
+      const match = urlOrPublicId.match(/\/upload\/(?:v\d+\/)?(.+?)(?:\.[a-z]+)?$/i);
+      if (match) publicId = match[1];
+      else return; // bukan URL Cloudinary yang valid
+    }
+    await cloudinary.uploader.destroy(publicId);
+  } catch {
+    // Silent fail — jangan block delete record
+  }
+}
+
+/**
+ * Hapus array gambar dari Cloudinary (untuk field images JSON array).
+ */
+async function deleteCloudinaryImages(imagesJson) {
+  if (!imagesJson) return;
+  try {
+    const urls = JSON.parse(imagesJson);
+    await Promise.all(urls.map(deleteCloudinaryImage));
+  } catch {
+    // Silent fail
+  }
+}
+
 // ─── CORS ────────────────────────────────────────────────────────────────────
 function setCors(req, res) {
   const origin = req.headers.origin || '';
@@ -189,6 +224,8 @@ module.exports = async function handler(req, res) {
   });
   route('DELETE', '/api/hero/:id', async (req, res) => {
     if (!requireAuth(req, res)) return;
+    const h = await prisma.hero.findUnique({ where: { id: req.params.id } });
+    if (h?.bgImage) await deleteCloudinaryImage(h.bgImage);
     await prisma.hero.delete({ where: { id: req.params.id } });
     res.json({ message: 'Deleted' });
   });
@@ -263,6 +300,8 @@ module.exports = async function handler(req, res) {
   });
   route('DELETE', '/api/angkatan/:id', async (req, res) => {
     if (!requireAuth(req, res)) return;
+    const a = await prisma.angkatan.findUnique({ where: { id: req.params.id } });
+    if (a?.image) await deleteCloudinaryImage(a.image);
     await prisma.angkatan.delete({ where: { id: req.params.id } });
     res.json({ message: 'Deleted' });
   });
@@ -286,6 +325,8 @@ module.exports = async function handler(req, res) {
   });
   route('DELETE', '/api/members/:id', async (req, res) => {
     if (!requireAuth(req, res)) return;
+    const m = await prisma.anggotaAngkatan.findUnique({ where: { id: req.params.id } });
+    if (m?.image) await deleteCloudinaryImage(m.image);
     await prisma.anggotaAngkatan.delete({ where: { id: req.params.id } });
     res.json({ message: 'Deleted' });
   });
@@ -338,6 +379,8 @@ module.exports = async function handler(req, res) {
   });
   route('DELETE', '/api/purna/:id', async (req, res) => {
     if (!requireAuth(req, res)) return;
+    const p = await prisma.purna.findUnique({ where: { id: req.params.id } });
+    if (p?.profile) await deleteCloudinaryImage(p.profile);
     await prisma.purna.delete({ where: { id: req.params.id } });
     res.json({ message: 'Deleted' });
   });
@@ -364,6 +407,8 @@ module.exports = async function handler(req, res) {
   });
   route('DELETE', '/api/program/:id', async (req, res) => {
     if (!requireAuth(req, res)) return;
+    const p = await prisma.program.findUnique({ where: { id: req.params.id } });
+    if (p?.images) await deleteCloudinaryImages(p.images);
     await prisma.program.delete({ where: { id: req.params.id } });
     res.json({ message: 'Deleted' });
   });
@@ -423,6 +468,16 @@ module.exports = async function handler(req, res) {
     if (!requireAuth(req, res)) return;
     await prisma.navigation.delete({ where: { id: req.params.id } });
     res.json({ message: 'Deleted' });
+  });
+
+  // ── DELETE MEDIA (hapus gambar dari Cloudinary) ───────────────────────────
+  route('DELETE', '/api/media', async (req, res) => {
+    if (!requireAuth(req, res)) return;
+    const body = await parseBody(req);
+    const { url } = body;
+    if (!url) return res.status(400).json({ error: 'url wajib diisi' });
+    await deleteCloudinaryImage(url);
+    res.json({ message: 'Media deleted from Cloudinary' });
   });
 
   // ── UPLOAD ────────────────────────────────────────────────────────────────
