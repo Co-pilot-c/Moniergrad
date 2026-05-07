@@ -170,4 +170,10 @@ export const uploadAPI = {
     if (!res.ok) throw new Error(data.error || `Upload gagal (${res.status})`);
     return data;
   },
+
+  // Hapus gambar dari Cloudinary via backend
+  deleteMedia: (url) => apiFetch('/api/media', {
+    method: 'DELETE',
+    body: JSON.stringify({ url }),
+  }),
 };

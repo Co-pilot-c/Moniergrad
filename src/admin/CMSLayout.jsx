@@ -149,14 +149,14 @@ export default function CMSLayout({ children }) {
       )}
 
       {/* ══════════════════════════════════════════
-          SIDEBAR — full light mode
+          SIDEBAR — scrolls with page, not fixed
       ══════════════════════════════════════════ */}
       <aside
         className={`
           fixed top-0 left-0 h-full w-60 z-30 flex flex-col
           bg-white border-r border-gray-200
           transform transition-transform duration-300
-          lg:translate-x-0 lg:static lg:transform-none
+          lg:translate-x-0 lg:static lg:h-screen lg:sticky lg:top-0
           ${sidebarOpen ? "translate-x-0 shadow-xl" : "-translate-x-full"}
         `}
       >
@@ -233,11 +233,10 @@ export default function CMSLayout({ children }) {
       {/* ══════════════════════════════════════════
           MAIN CONTENT
       ══════════════════════════════════════════ */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+      <div className="flex-1 flex flex-col min-w-0">
 
-        {/* Topbar — sticky, mengikuti scroll */}
+        {/* Topbar — NOT sticky, scrolls with page */}
         <header className="
-          sticky top-0 z-10
           bg-white border-b border-gray-200
           px-5 py-3.5
           flex items-center justify-between
@@ -282,7 +281,7 @@ export default function CMSLayout({ children }) {
         </header>
 
         {/* Page content */}
-        <main className="flex-1 p-5 overflow-auto bg-gray-50">
+        <main className="flex-1 p-5 bg-gray-50">
           {children}
         </main>
       </div>

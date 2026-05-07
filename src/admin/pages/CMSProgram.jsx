@@ -37,7 +37,7 @@ export default function CMSProgram() {
 
   const handleDelete = async (id) => {
     if (!confirm("Hapus program ini?")) return;
-    await programAPI.delete(id);
+    await programAPI.delete(id); // backend otomatis hapus semua gambar dari Cloudinary
     showMsg("Program dihapus");
     load();
   };
@@ -60,6 +60,11 @@ export default function CMSProgram() {
   };
 
   const removeImage = (index) => {
+    const url = imageList[index];
+    // Hapus dari Cloudinary jika URL cloudinary
+    if (url && url.includes('cloudinary')) {
+      uploadAPI.deleteMedia(url).catch(() => {});
+    }
     const newList = imageList.filter((_, i) => i !== index);
     setImageList(newList);
     setForm((f) => ({ ...f, images: JSON.stringify(newList) }));

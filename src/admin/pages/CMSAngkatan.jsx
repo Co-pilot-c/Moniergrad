@@ -33,7 +33,7 @@ export default function CMSAngkatan() {
 
   const handleDelete = async (id) => {
     if (!confirm("Hapus angkatan ini beserta semua anggotanya?")) return;
-    await angkatanAPI.delete(id);
+    await angkatanAPI.delete(id); // backend otomatis hapus gambar dari Cloudinary
     showMsg("Angkatan dihapus");
     load();
   };
@@ -43,6 +43,9 @@ export default function CMSAngkatan() {
     if (!file) return;
     setUploading(true);
     try {
+      if (form.image && form.image.includes('cloudinary')) {
+        await uploadAPI.deleteMedia(form.image).catch(() => {});
+      }
       const res = await uploadAPI.upload(file, 'angkatan');
       setForm((f) => ({ ...f, image: res.url }));
       showMsg("Gambar berhasil diupload");
@@ -81,6 +84,9 @@ export default function CMSAngkatan() {
     if (!file) return;
     setMemberUploading(true);
     try {
+      if (memberForm.image && memberForm.image.includes('cloudinary')) {
+        await uploadAPI.deleteMedia(memberForm.image).catch(() => {});
+      }
       const res = await uploadAPI.upload(file, 'members');
       setMemberForm((f) => ({ ...f, image: res.url }));
     } catch (err) {

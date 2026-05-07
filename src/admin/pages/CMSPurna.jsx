@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { purnaAPI, uploadAPI } from "../../utils/api.js";
 
 const defaultForm = {
@@ -17,6 +17,7 @@ export default function CMSPurna() {
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState("");
   const [uploading, setUploading] = useState(false);
+  const formRef = useRef(null);
 
   const load = () => purnaAPI.getAllAdmin().then(setPurnas).catch(() => {});
   useEffect(() => { load(); }, []);
@@ -26,12 +27,12 @@ export default function CMSPurna() {
   const handleEdit = (p) => {
     setEditId(p.id);
     setForm({ ...defaultForm, ...p });
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    setTimeout(() => formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
   };
 
   const handleDelete = async (id) => {
     if (!confirm("Hapus kata purna ini?")) return;
-    await purnaAPI.delete(id);
+    await purnaAPI.delete(id); // backend otomatis hapus foto dari Cloudinary
     showMsg("Kata purna dihapus");
     load();
   };
@@ -41,6 +42,9 @@ export default function CMSPurna() {
     if (!file) return;
     setUploading(true);
     try {
+      if (form.profile && form.profile.includes('cloudinary')) {
+        await uploadAPI.deleteMedia(form.profile).catch(() => {});
+      }
       const res = await uploadAPI.upload(file, 'purna');
       setForm((f) => ({ ...f, profile: res.url }));
       showMsg("Foto berhasil diupload");
@@ -82,7 +86,7 @@ export default function CMSPurna() {
       )}
 
       {/* Form */}
-      <div className="bg-white rounded-2xl border border-gray-100 p-6">
+      <div ref={formRef} className="bg-white rounded-2xl border border-gray-100 p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-6">
           {editId ? "Edit Kata Purna" : "Tambah Kata Purna Baru"}
         </h2>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { statsAPI } from "../../utils/api.js";
 
 const defaultForm = {
@@ -17,6 +17,7 @@ export default function CMSStats() {
   const [editId, setEditId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState("");
+  const formRef = useRef(null);
 
   const load = () => statsAPI.getAll().then(setStats).catch(() => {});
   useEffect(() => { load(); }, []);
@@ -26,7 +27,7 @@ export default function CMSStats() {
   const handleEdit = (stat) => {
     setEditId(stat.id);
     setForm({ ...defaultForm, ...stat });
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    setTimeout(() => formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
   };
 
   const handleDelete = async (id) => {
@@ -77,7 +78,7 @@ export default function CMSStats() {
       </div>
 
       {/* Form */}
-      <div className="bg-white rounded-2xl border border-gray-100 p-6">
+      <div ref={formRef} className="bg-white rounded-2xl border border-gray-100 p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-6">
           {editId ? "Edit Stat" : "Tambah Stat Baru"}
         </h2>

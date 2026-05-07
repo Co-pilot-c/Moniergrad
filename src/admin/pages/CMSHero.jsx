@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { heroAPI, uploadAPI } from "../../utils/api.js";
 
 const defaultForm = {
@@ -22,6 +22,7 @@ export default function CMSHero() {
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState("");
   const [uploading, setUploading] = useState(false);
+  const formRef = useRef(null);
 
   const load = () => heroAPI.getAllAdmin().then(setHeroes).catch(() => {});
 
@@ -32,12 +33,12 @@ export default function CMSHero() {
   const handleEdit = (hero) => {
     setEditId(hero.id);
     setForm({ ...defaultForm, ...hero });
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    setTimeout(() => formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
   };
 
   const handleDelete = async (id) => {
     if (!confirm("Hapus hero ini?")) return;
-    await heroAPI.delete(id);
+    await heroAPI.delete(id); // backend otomatis hapus dari Cloudinary
     showMsg("Hero dihapus");
     load();
   };
@@ -47,7 +48,11 @@ export default function CMSHero() {
     if (!file) return;
     setUploading(true);
     try {
-      const res = await uploadAPI.upload(file);
+      // Hapus gambar lama dari Cloudinary jika ada
+      if (form.bgImage && form.bgImage.includes('cloudinary')) {
+        await uploadAPI.deleteMedia(form.bgImage).catch(() => {});
+      }
+      const res = await uploadAPI.upload(file, 'angkatan');
       setForm((f) => ({ ...f, bgImage: res.url }));
       showMsg("Gambar berhasil diupload");
     } catch (err) {
@@ -88,7 +93,7 @@ export default function CMSHero() {
       )}
 
       {/* Form */}
-      <div className="bg-white rounded-2xl border border-gray-100 p-6">
+      <div ref={formRef} className="bg-white rounded-2xl border border-gray-100 p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-6">
           {editId ? "Edit Hero" : "Tambah Hero Baru"}
         </h2>
