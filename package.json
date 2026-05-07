@@ -3,7 +3,7 @@
   "version": "4.0.0",
   "description": "CMS API for Dewan Ambalan — Pure serverless, no Express",
   "scripts": {
-    "dev": "node -e \"require('dotenv').config(); const h=require('./api/index'); require('http').createServer(h).listen(3000, ()=>console.log('Dev: http://localhost:3000'))\"",
+    "dev": "node src/dev.js",
     "build": "npx prisma generate",
     "db:push": "npx prisma db push",
     "db:seed": "node src/seed.js",
