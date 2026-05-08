@@ -8,12 +8,11 @@ import Perlak1 from "../assets/images/perlak1.jpeg";
 import Score from "../components/atoms/Score";
 import { programAPI, statsAPI } from "../utils/api.js";
 
-// Default stats fallback
 const DEFAULT_STATS = [
-  { value: "120", suffix: "+", label: "Active",       isText: false },
-  { value: "92",  suffix: "K", label: "Users",        isText: false },
-  { value: "25",  suffix: "%", label: "Growth",       isText: false },
-  { value: "12",  suffix: "K+",label: "Testimonials", isText: false },
+  { value: "120", suffix: "+",  label: "Active",       isText: false },
+  { value: "92",  suffix: "K",  label: "Users",        isText: false },
+  { value: "25",  suffix: "%",  label: "Growth",       isText: false },
+  { value: "12",  suffix: "K+", label: "Testimonials", isText: false },
 ];
 
 export default function Program() {
@@ -27,7 +26,6 @@ export default function Program() {
     },
   ]);
 
-  // Global stats — dipakai jika program tidak punya stats sendiri
   const [globalStats, setGlobalStats] = useState(DEFAULT_STATS);
   const [page, setPage] = useState(0);
 
@@ -36,12 +34,10 @@ export default function Program() {
       .then((data) => {
         if (data && data.length > 0) {
           const formatted = data.map((p) => {
-            // Parse images
             let images = [];
             try { images = JSON.parse(p.images || "[]"); } catch { images = []; }
             if (images.length === 0) images = [Perlak, Perlak1];
 
-            // Parse stats per-program (field baru di DB)
             let programStats = [];
             try { programStats = JSON.parse(p.stats || "[]"); } catch { programStats = []; }
 
@@ -52,7 +48,6 @@ export default function Program() {
       })
       .catch(() => {});
 
-    // Load global stats sebagai fallback
     statsAPI.getBySection("program")
       .then((data) => { if (data && data.length > 0) setGlobalStats(data); })
       .catch(() => {});
@@ -64,7 +59,6 @@ export default function Program() {
 
   if (!current) return null;
 
-  // Gunakan stats program jika ada, fallback ke global stats
   const activeStats = (current.programStats && current.programStats.length > 0)
     ? current.programStats
     : globalStats;
@@ -78,11 +72,50 @@ export default function Program() {
       <div className="absolute bottom-0 right-0 w-64 h-64 bg-primary-200 opacity-10 rounded-full blur-2xl" />
 
       <div className="relative max-w-7xl mx-auto">
-        <div className="grid lg:grid-cols-2 gap-16 lg:gap-20 lg:items-stretch">
+        {/*
+          Desktop (lg): grid 2 kolom — kiri gambar, kanan konten (tidak berubah)
+          Mobile: flex-col dengan order CSS
+            order-1 = Tagline + Judul + Nav (tampil pertama)
+            order-2 = Gambar (tampil kedua)
+            order-3 = Deskripsi + Stats (tampil ketiga)
+        */}
+        <div className="flex flex-col lg:grid lg:grid-cols-2 lg:gap-20 lg:items-stretch gap-6">
 
-          {/* ── Kolom Kiri: Gambar ── */}
-          <div className="flex flex-col gap-6 animate-fadeSlideIn">
-            <div className="flex flex-col gap-6">
+          {/* ── MOBILE order-1: Header (Tagline, Judul, Nav) ── */}
+          {/* ── DESKTOP: bagian dari kolom kanan ── */}
+          <div className="order-1 lg:hidden space-y-3">
+            <div className="text-center">
+              <Tagline>Program Kami</Tagline>
+            </div>
+            <div className="flex justify-between items-start">
+              <div>
+                <Tittle>{current.title}</Tittle>
+                {current.subtitle && <Subtitle>{current.subtitle}</Subtitle>}
+              </div>
+              <div className="flex items-center gap-2 flex-shrink-0 ml-3">
+                <button
+                  onClick={handlePrev}
+                  className="w-10 h-10 bg-white rounded-full shadow-soft flex items-center justify-center text-gray-700 hover:bg-gradient-green hover:text-white transition-all duration-400"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+                <button
+                  onClick={handleNext}
+                  className="w-10 h-10 bg-white rounded-full shadow-soft flex items-center justify-center text-gray-700 hover:bg-gradient-green hover:text-white transition-all duration-400"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* ── Kolom Kiri (Desktop) / order-2 (Mobile): Gambar ── */}
+          <div className="order-2 lg:order-none flex flex-col gap-6 animate-fadeSlideIn">
+            <div className="flex flex-col gap-4 lg:gap-6">
               {current.images.map((image, i) => (
                 <div key={i} className="relative group">
                   <div className="absolute inset-0 bg-gradient-green opacity-0 group-hover:opacity-10 rounded-3xl transition-opacity duration-400" />
@@ -99,7 +132,7 @@ export default function Program() {
             </div>
 
             {/* Indikator */}
-            <div className="mt-auto flex justify-center gap-2">
+            <div className="flex justify-center gap-2">
               {programs.map((_, index) => (
                 <button
                   key={index}
@@ -112,10 +145,11 @@ export default function Program() {
             </div>
           </div>
 
-          {/* ── Kolom Kanan: Konten ── */}
-          <div className="flex flex-col gap-6 animate-fadeSlideUp">
-            {/* Header + deskripsi */}
-            <div className="space-y-4">
+          {/* ── Kolom Kanan (Desktop) / order-3 (Mobile): Konten ── */}
+          <div className="order-3 lg:order-none flex flex-col gap-6 animate-fadeSlideUp">
+
+            {/* Header — hanya tampil di desktop */}
+            <div className="hidden lg:block space-y-4">
               <div className="text-center">
                 <Tagline>Program Kami</Tagline>
               </div>
@@ -143,10 +177,12 @@ export default function Program() {
                   </button>
                 </div>
               </div>
-              <Description style="justify">{current.description}</Description>
             </div>
 
-            {/* Stats — per-program, fallback ke global */}
+            {/* Deskripsi */}
+            <Description style="justify">{current.description}</Description>
+
+            {/* Stats */}
             <div className="mt-auto flex flex-row flex-wrap justify-start gap-3">
               {activeStats.map((stat, index) => (
                 <div key={stat.id || index} className="text-center group shrink-0">
