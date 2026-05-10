@@ -16,6 +16,9 @@ dist-ssr
 # Env files — .env.production is committed for Vercel build
 .env
 
+# Backend folder should not be tracked in frontend repo
+backend/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
