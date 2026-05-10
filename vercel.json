@@ -1,9 +1,8 @@
 {
-  "buildCommand": "npx prisma generate && npx prisma db push --accept-data-loss",
   "functions": {
     "index.js": {
       "maxDuration": 30,
-      "includeFiles": "api/**,prisma/**"
+      "includeFiles": "api/**,prisma/**,node_modules/.prisma/**,node_modules/@prisma/client/**"
     }
   },
   "rewrites": [
