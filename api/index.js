@@ -386,6 +386,21 @@ module.exports = async function handler(req, res) {
   });
 
   // ── PROGRAM ───────────────────────────────────────────────────────────────
+  // Allowed fields for Program model — prevents "Unknown argument" errors
+  // if the Prisma client is temporarily out of sync with the schema.
+  function sanitizeProgram(body) {
+    const { title, subtitle, description, images, stats, order, active } = body;
+    const data = {};
+    if (title !== undefined)       data.title       = title;
+    if (subtitle !== undefined)    data.subtitle    = subtitle;
+    if (description !== undefined) data.description = description;
+    if (images !== undefined)      data.images      = images;
+    if (stats !== undefined)       data.stats       = stats;
+    if (order !== undefined)       data.order       = Number(order);
+    if (active !== undefined)      data.active      = Boolean(active);
+    return data;
+  }
+
   route('GET', '/api/program', async (_req, res) => {
     res.json(await prisma.program.findMany({ where: { active: true }, orderBy: { order: 'asc' } }));
   });
@@ -399,11 +414,13 @@ module.exports = async function handler(req, res) {
   });
   route('POST', '/api/program', async (req, res) => {
     if (!requireAuth(req, res)) return;
-    res.status(201).json(await prisma.program.create({ data: await parseBody(req) }));
+    const data = sanitizeProgram(await parseBody(req));
+    res.status(201).json(await prisma.program.create({ data }));
   });
   route('PUT', '/api/program/:id', async (req, res) => {
     if (!requireAuth(req, res)) return;
-    res.json(await prisma.program.update({ where: { id: req.params.id }, data: await parseBody(req) }));
+    const data = sanitizeProgram(await parseBody(req));
+    res.json(await prisma.program.update({ where: { id: req.params.id }, data }));
   });
   route('DELETE', '/api/program/:id', async (req, res) => {
     if (!requireAuth(req, res)) return;

@@ -1,3 +1,2 @@
-// Root entrypoint for Vercel auto-detection
-// Vercel searches: index.js, app.js, server.js at root
+// Local dev entrypoint — not used by Vercel (see vercel.json)
 module.exports = require('./api/index');

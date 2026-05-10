@@ -1,11 +1,18 @@
 {
-  "functions": {
-    "index.js": {
-      "maxDuration": 30,
-      "includeFiles": "api/**,prisma/**,node_modules/.prisma/**,node_modules/@prisma/client/**"
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/index.js",
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": ["prisma/**"]
+      }
     }
-  },
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/index.js" }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/api/index.js"
+    }
   ]
 }

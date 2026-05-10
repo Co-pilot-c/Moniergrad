@@ -4,10 +4,9 @@
   "description": "CMS API for Dewan Ambalan — Pure serverless, no Express",
   "scripts": {
     "dev": "node src/dev.js",
-    "build": "npx prisma generate",
-    "postinstall": "npx prisma generate",
     "db:push": "npx prisma db push",
     "db:seed": "node src/seed.js",
+    "postinstall": "npx prisma generate",
     "vercel-build": "npx prisma generate && npx prisma db push --accept-data-loss"
   },
   "dependencies": {
@@ -16,9 +15,7 @@
     "busboy": "^1.6.0",
     "cloudinary": "^1.41.3",
     "dotenv": "^16.3.1",
-    "jsonwebtoken": "^9.0.3"
-  },
-  "devDependencies": {
+    "jsonwebtoken": "^9.0.3",
     "prisma": "^5.8.0"
   },
   "engines": {
