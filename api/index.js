@@ -77,7 +77,7 @@ function setCors(req, res) {
   res.setHeader('Access-Control-Allow-Headers', 'Authorization,Content-Type,Accept');
 }
 
-// ─── Auth ─────────────────────────────────────────────────────────────────────
+// ─── Auth ───────────────────────────────────────────────────────────────────── 
 function verifyToken(req) {
   const h = req.headers.authorization || '';
   if (!h.startsWith('Bearer ')) return null;

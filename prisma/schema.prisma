@@ -194,6 +194,8 @@ model Footer {
   phone           String?
   address         String?
   copyrightText   String?  @map("copyright_text")
+  navLinks        String   @db.Text @default("[]") @map("nav_links")   // JSON: [{label,url}]
+  quickLinks      String   @db.Text @default("[]") @map("quick_links") // JSON: [{label,url}]
   active          Boolean  @default(true)
   createdAt       DateTime @default(now()) @map("created_at")
   updatedAt       DateTime @updatedAt @map("updated_at")
