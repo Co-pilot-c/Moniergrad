@@ -1,6 +1,22 @@
 import { useState, useEffect } from "react";
 import { footerAPI } from "../../utils/api.js";
 
+// Default links — dipakai jika DB belum punya data
+const DEFAULT_NAV = [
+  { label: "Home",    url: "#home" },
+  { label: "About",   url: "#about" },
+  { label: "Struktur",url: "#strukture" },
+  { label: "Program", url: "#program" },
+  { label: "Alumni",  url: "#purna" },
+];
+
+const DEFAULT_QUICK = [
+  { label: "Panduan Pendaftaran", url: "#" },
+  { label: "Kegiatan Kami",       url: "#" },
+  { label: "Galeri Foto",         url: "#" },
+  { label: "Dokumentasi",         url: "#" },
+];
+
 export default function Footer() {
   const [footerData, setFooterData] = useState({
     brandName: "DewanAmbalan",
@@ -12,6 +28,8 @@ export default function Footer() {
     phone: "+62 812 3456 7890",
     address: "Majalengka, Indonesia",
     copyrightText: "Dewan Ambalan. All rights reserved.",
+    navLinks: "[]",
+    quickLinks: "[]",
   });
 
   useEffect(() => {
@@ -20,14 +38,26 @@ export default function Footer() {
       .catch(() => {});
   }, []);
 
+  // Parse links — fallback ke default jika kosong
+  let navLinks = DEFAULT_NAV;
+  let quickLinks = DEFAULT_QUICK;
+  try {
+    const parsed = JSON.parse(footerData.navLinks || "[]");
+    if (parsed.length > 0) navLinks = parsed;
+  } catch { /* use default */ }
+  try {
+    const parsed = JSON.parse(footerData.quickLinks || "[]");
+    if (parsed.length > 0) quickLinks = parsed;
+  } catch { /* use default */ }
+
   return (
     <footer className="relative bg-gradient-to-br from-gray-50 to-white text-gray-900 pt-16 lg:pt-20 pb-8 lg:pb-12 overflow-hidden">
-      {/* Background decoration */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-green-light opacity-5 rounded-full blur-3xl"></div>
       <div className="absolute bottom-0 left-0 w-64 h-64 bg-primary-200 opacity-5 rounded-full blur-2xl"></div>
 
       <div className="relative max-w-7xl mx-auto px-6 lg:px-20">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 mb-12">
+
           {/* Brand */}
           <div className="lg:col-span-1">
             <div className="flex items-center gap-3 mb-6">
@@ -38,7 +68,6 @@ export default function Footer() {
             <p className="text-gray-600 leading-relaxed mb-6">
               {footerData.brandDesc}
             </p>
-            {/* Social Media */}
             <div className="flex gap-3">
               <a href={footerData.facebookUrl || "#"} className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-gradient-green hover:text-white transition-all duration-400 transform hover:scale-110">
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -58,30 +87,43 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Navigation */}
+          {/* Navigasi — dari CMS */}
           <div>
             <h2 className="text-lg font-semibold text-gray-900 mb-6">Navigasi</h2>
             <ul className="space-y-3">
-              <li><a href="#home" className="text-gray-600 hover:text-primary-600 transition-colors duration-300 flex items-center gap-2">→ Home</a></li>
-              <li><a href="#about" className="text-gray-600 hover:text-primary-600 transition-colors duration-300 flex items-center gap-2">→ About</a></li>
-              <li><a href="#strukture" className="text-gray-600 hover:text-primary-600 transition-colors duration-300 flex items-center gap-2">→ Struktur</a></li>
-              <li><a href="#program" className="text-gray-600 hover:text-primary-600 transition-colors duration-300 flex items-center gap-2">→ Program</a></li>
-              <li><a href="#purna" className="text-gray-600 hover:text-primary-600 transition-colors duration-300 flex items-center gap-2">→ Alumni</a></li>
+              {navLinks.map((link, i) => (
+                <li key={i}>
+                  <a
+                    href={link.url}
+                    className="text-gray-600 hover:text-primary-600 transition-colors duration-300 flex items-center gap-2"
+                  >
+                    → {link.label}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Quick Links */}
+          {/* Link Cepat — dari CMS */}
           <div>
             <h2 className="text-lg font-semibold text-gray-900 mb-6">Link Cepat</h2>
             <ul className="space-y-3">
-              <li><a href="#" className="text-gray-600 hover:text-primary-600 transition-colors duration-300 flex items-center gap-2">→ Panduan Pendaftaran</a></li>
-              <li><a href="#" className="text-gray-600 hover:text-primary-600 transition-colors duration-300 flex items-center gap-2">→ Kegiatan Kami</a></li>
-              <li><a href="#" className="text-gray-600 hover:text-primary-600 transition-colors duration-300 flex items-center gap-2">→ Galeri Foto</a></li>
-              <li><a href="#" className="text-gray-600 hover:text-primary-600 transition-colors duration-300 flex items-center gap-2">→ Dokumentasi</a></li>
+              {quickLinks.map((link, i) => (
+                <li key={i}>
+                  <a
+                    href={link.url}
+                    target={link.url && !link.url.startsWith('#') ? "_blank" : "_self"}
+                    rel="noopener noreferrer"
+                    className="text-gray-600 hover:text-primary-600 transition-colors duration-300 flex items-center gap-2"
+                  >
+                    → {link.label}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Contact */}
+          {/* Kontak */}
           <div>
             <h2 className="text-lg font-semibold text-gray-900 mb-6">Kontak</h2>
             <ul className="space-y-4">
